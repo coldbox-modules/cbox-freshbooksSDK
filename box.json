@@ -1,0 +1,24 @@
+{
+    "name":"Freshbooks SDK Builder",
+    "version":"1.0.0",
+    "slug":"freshbooks-shell",
+    "private":false,
+    "dependencies":{
+        "coldbox":"be",
+        "workbench":"git+https://github.com/Ortus-Solutions/unified-workbench.git"
+    },
+    "devDependencies":{
+        "testbox":"stable"
+    },
+    "installPaths":{
+        "testbox":"testbox",
+        "coldbox":"coldbox",
+        "workbench":"workbench"
+    },
+    "testbox":{
+        "runner":"http://localhost:49616/tests/runner.cfm"
+    },
+    "scripts":{
+        "postVersion":"recipe workbench/bump.boxr"
+    }
+}

@@ -1,0 +1,20 @@
+# IDE Stuff
+.settings
+settings.xml
+
+# Tokens
+config/apitoken.cfm
+
+# Logs
+logs/*.log
+
+# Test Results
+tests/results/*
+
+# Dependenncies
+coldbox/*
+testbox/*
+artifacts/*
+apidocs/docbox/*
+workbench/*
+build/*
