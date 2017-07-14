@@ -1,21 +1,22 @@
 [![Build Status](https://travis-ci.org/coldbox-modules/cbox-forgeboxSDK.svg?branch=master)](https://travis-ci.org/coldbox-modules/cbox-forgeboxSDK)
 
-#WELCOME TO THE COLDBOX FRESHBOOKS MODULE
+# WELCOME TO THE COLDBOX FRESHBOOKS MODULE
+
 This module will connect your ColdBox applications to the Freshbooks API (https://www.freshbooks.com/developers)
 
-##LICENSE
+## LICENSE
 Apache License, Version 2.0.
 
-##IMPORTANT LINKS
+## IMPORTANT LINKS
 - https://github.com/coldbox-modules/cbox-freshbooksSDK
 - https://forgebox.io/view/cbfreshbooks
 - [Changelog](changelog.md)
 
-##SYSTEM REQUIREMENTS
+## SYSTEM REQUIREMENTS
 - Lucee 4.5+
 - ColdFusion 10+
 
-#INSTRUCTIONS
+# INSTRUCTIONS
 
 Just drop into your **modules** folder or use CommandBox to install
 
