@@ -80,20 +80,26 @@ component{
 		moduleSettings = {
 
 			cbfreshbooks = {
-				APIToken = getAPIToken()
+				APIToken = getAPITokenStruct()
 			}
 
 		}
 
 	}
 
-	function getAPIToken(){
-		var targetFile = expandPath( "/config/apitoken.cfm" );
+	function getAPITokenStruct(){
+		var targetFile = expandPath( "/config/apiToken.cfm" );
 		// If local file token exists, use it.
 		if( fileExists( targetFile ) ){
-			return fileRead( targetFile );
-		}
+			var file = fileRead( targetFile );
+			var tokenStruct = {};
+			var clientId = ListGetAt(file, 1, ',');
+			var clientSecret = ListGetAt(file, 2, ',');
 
+			tokenStruct.clientId = clientId;
+			tokenStruct.clientSecret = clientSecret;
+			return tokenStruct;
+		}
 		// Check Java Environmennt
 		return getEnv( "FRESHBOOKS_API_TOKEN", "" );
 	}
