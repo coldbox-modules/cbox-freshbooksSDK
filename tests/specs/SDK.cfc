@@ -41,10 +41,19 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					writeDump( sdk.getLoginURL() );
 					expect ( sdk.getLoginURL() ).notToBeEmpty();
 				});	
-				it( "can retrieve a valid token" , function(){
-					//I obtain the authorization code from the URL built from the client ID 
-					tokenStruct = sdk.getAccessToken( "b3fd942a4ce16f290c9e3689b7b75cac765aa7cc2834647de14daef8e1005738" );
-					expect ( tokenStruct ).notToBeEmpty();
+				it( "can authenticate and get a valid token" , function(){
+					//I obtain the authorization code from the URL built from the client ID
+					var tokenResponse = {};
+					tokenResponse = sdk.Authenticate( "c6064aa2412fee64a969ee09d26497fa70bbb68c62bc7f6dc6de738c51c98fc7" );
+					expect ( tokenResponse ).notToBeEmpty();
+					expect ( tokenResponse.success ).toBe ( true );
+				});
+				it( "can set identity information" , function(){
+					sdk.setIdentityInformation( sdk.getAPITokenStruct().access_token );
+				});
+				it( "can get identity information" , function(){
+					identityInfo = sdk.getIdentityInformation( );
+					expect ( identityInfo ).notToBeNull();
 				});
 				given( "an invalid token", function(){
 					then( "I should get an error response", function(){
@@ -59,8 +68,25 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					expect ( testCall ).notToBeEmpty();
 				});
 				it( "can get the list of clients" , function(){
-					writeDump( sdk.getClients() );
+					sdk.getClients( "EalP4" );
 				});
+				it( "can get a single client" , function(){
+					sdk.getSingleClient( "EalP4", "152604" );
+				});
+				it( "can create a single client" , function(){
+					userInfo = {};
+					userInfo[ "name"] = "James";
+					userInfo[ "email" ] = "James@ortus.com";
+					//WriteDump( sdk.createSingleClient( userInfo , "EalP4") );
+				});
+				it( "can list the expenses" , function(){
+					//sdk.getExpensesList( "EalP4" )
+					writeDump( sdk.getExpensesList( "EalP4 1" ) );
+				});
+				it( "can get an expense by id" , function(){
+					sdk.getExpenseById( "EalP4", "1119673"  );
+				});
+
 			});
 		});
 	}
