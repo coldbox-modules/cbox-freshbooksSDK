@@ -1,32 +1,55 @@
 /**
 * This is the Freshbooks SDK class
 */
-component accessors=true{
+component accessors=true singleton threadsafe{
 	
-	// DI
-	property name="settings" inject="coldbox:modulesettings:cbfreshbooks";
+	/**
+	 * The module settings
+	 */
+	property name="settings";
 
-	//Properties
-	property name="clientId";
+
+	/**
+	 * The client ID
+	 */
+	property name="clientID";
 	property name="clientSecret";
 	property name="APItoken";
-	property name="apiUrl";
+	property name="APIURL";
+	property name="authLink";
+	property name="redirectURI"
+
+	/**
+	 * 
+	 */
 	property name="identityInformation";
+
+	// DI
+	property name="log" inject="logbox:logger:{this}";
 
 	/**
 	* Constructor
+	* @settings The module settings
+	* @settings.inject coldbox:modulesettings:cbfreshbooks
 	*/
-	function init(){
+	function init( settings ){
+		//writedump( arguments ); abort;
+		variables.settings = arguments.settings;
+		variables.APIURL = arguments.settings.APIURL;
+		variables.authLink = arguments.settings.authLink;
+		variables.redirectURI = arguments.settings.redirectURI;
+		variables.clientID = arguments.settings.APIToken.clientID;
+		variables.clientSecret = arguments.settings.APIToken.clientSecret;
 		return this;
 	}
 
-	function onDIComplete(){
+	/**function onDIComplete(){
 		var tokenStruct = getAPITokenStruct();
-		setApiUrl( "https://api.freshbooks.com/auth/oauth/token/" );
+		setAPIUrl( "https://api.freshbooks.com/auth/oauth/token/" );
 		setClientID( tokenStruct.clientId );
 		setClientSecret( tokenStruct.clientSecret );
 		identityInformation = {};
-	}
+	}*/
 
 	/**
 	 * Retrieve the application token for this module
@@ -39,19 +62,19 @@ component accessors=true{
 	* Genrate the Login URL to get the authorization code
 	*/
 	function getLoginURL(){
-		strLoginURL = "https://my.freshbooks.com/service/auth/oauth/"
- 		 & "authorize?client_id=" & clientID
+		var strLoginURL = getAuthLink()
+ 		 & "authorize?client_id=" & getClientID()
  		 & "&response_type=code"
-         & "&redirect_uri=" & "https://github.com/coldbox-modules/cbox-freshbooksSDK";
-	return strLoginURL;
+         & "&redirect_uri=" & getRedirectURI();
+		
+		return strLoginURL;
 	}
 
 	/**
 	* Do the authentication process and retrieve the token access from a given authorization code
 	* code The authorization code associated to the application and client Id
 	*/
-	function Authenticate( String code ){
-		var httpService = new http();
+	function authenticate( String code ){
 		var params = {};
 		var body = {};
 		params [ "method" ] = "post" ;
@@ -68,15 +91,14 @@ component accessors=true{
 		params [ "body" ] = body ;
 		response = makeRequest( params );
 
-		return ManageResponse( response );
+		return AuthResponse( response );
 	}
 
 	/**
 	* Make a test call
 	* It will be deleted later
 	*/
-	function testCall()
-	{
+	function testCall(){
 		var params = {};
 		params[ "method" ] = "get";
 		params [ "Api-Version" ] = "alpha";
@@ -86,23 +108,41 @@ component accessors=true{
 	}
 
 	/**
-	* Retrieve the list of clients
+	* Returns an array of structs with the list of clients
 	*/
 	function getClients( required String accountID )
 	{
 		var params = {};
+		var response = {};
 		params[ "method" ] = "get";
 		params [ "Api-Version" ] = "alpha";
 		params[ "Authorization" ] = "Bearer " & getAPITokenStruct().access_token;
 		params [ "URL" ] = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &"/users/clients";
-		return makeRequest( params );
+
+		response = buildStruct( makeRequest( params ) );
+
+		if( response.success ){
+			var clients = [];
+			for(cl in response.data.result.clients) {
+				arrayAppend(clients, cl);
+			}
+			return clients;
+		}
+		else{
+			throw response.error[1].message;
+		}
 	}
 
 	/**
 	* Retrieve a single client
-	* accountID The account Id that the client belongs to, id of the clientt
+	* accountID The account Id that the client belongs to, id of the client
 	*/
 	function getSingleClient( required String accountID, required String id ){
+		if( isNull( arguments.accountID ) )
+
+		// NOTES: isDefined(), isNull(), structKeyExists()
+		// arguments.accountID.len() or len( arguments.accountID )
+
 		if( NOT IsDefined("arguments.accountID") OR arguments.accountID EQ "" ){
 			throw( "Account id cannot be null or empty");
 		}
@@ -116,8 +156,14 @@ component accessors=true{
 		params [ "URL" ] = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 		 				   "/users/clients/" & arguments.id;
 		
-		return makeRequest( params );
+		response = buildStruct( makeRequest( params ) );
 
+		if( response.success ){
+			return response.data.result.client;
+		}
+		else{
+			throw response.error[1].message;
+		}
 	}
 
 	/**
@@ -157,7 +203,19 @@ component accessors=true{
 		params [ "Api-Version" ] = "alpha";
 		params[ "Authorization" ] = "Bearer " & getAPITokenStruct().access_token;
 		params [ "URL" ] = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/expenses/expenses";
-		return makeRequest( params );
+
+		response = buildStruct( makeRequest( params ) );
+		if( response.success ){
+			var expenses = [];
+			for( var exp in response.data.result.expenses) {
+				arrayAppend(expenses, exp);
+				expenses.append( exp );
+			}
+			return expenses;
+		}
+		else{
+			throw response.error[1].message;
+		}
 	}
 
 	/**
@@ -173,7 +231,15 @@ component accessors=true{
 		params[ "Authorization" ] = "Bearer " & getAPITokenStruct().access_token;
 		params [ "URL" ] = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						   "/expenses/expenses/"& arguments.expenseID;
-		return makeRequest( params );
+
+		response = buildStruct( makeRequest( params ) );
+
+		if( response.success ){
+			return response.data.result.expense;
+		}
+		else{
+			throw response.error[1].message;
+		}
 	}
 
 	/**
@@ -219,7 +285,7 @@ component accessors=true{
 			StructDelete(params,"body");
 		}
 		//loop extra header parameters and add them to the request
-		for(key in params) {
+		for(var key in params) {
 			httpService.addParam( type= "header" , name = key, value=params[key] );
 		}
 		var result = httpService.send().getPrefix().filecontent;
@@ -227,18 +293,39 @@ component accessors=true{
 	}
 
 	/**
+	* take the response and build an struct with the information
+	* it returns a 'success' key to verify if an error occurred in the request
+	*/
+	function buildStruct( required response ){
+		var stuResponse = {};
+		var jsonResponse = deserializeJSON(arguments.response);
+		
+		if (!structKeyExists(jsonResponse[ "response" ], "errors")){
+			structInsert(stuResponse, "data", jsonResponse[ "response" ]);
+			structInsert(stuResponse, "success", true);
+		}
+		
+		else{
+			structInsert(stuResponse, "error", jsonResponse[ "response" ][ "errors"]);
+			structInsert(stuResponse, "success", false);
+		}
+
+		return stuResponse;
+	}
+
+	/**
 	* take the response from the access and refresh token requests 
 	*/
-	function ManageResponse( required response ){
+	function AuthResponse( required response ){
 		var stuResponse = {};
 		var jsonResponse = deserializeJSON(arguments.response);
 		
 		if (structKeyExists(jsonResponse, "access_token")){
 			<!--- Insert the access token into the properties --->
-			structInsert(stuResponse, "access_token",	jsonResponse.access_token);
-			structInsert(stuResponse, "token_type",		jsonResponse.token_type);
-			structInsert(stuResponse, "expires_in_raw",	jsonResponse.expires_in);
-			structInsert(stuResponse, "expires_in",		DateAdd("s", jsonResponse.expires_in, Now()));
+			structInsert( stuResponse, "access_token",	jsonResponse.access_token);
+			structInsert( stuResponse, "token_type",		jsonResponse.token_type);
+			structInsert( stuResponse, "expires_in_raw",	jsonResponse.expires_in);
+			structInsert( stuResponse, "expires_in",		DateAdd("s", jsonResponse.expires_in, Now()));
 			
 			if (structKeyExists(jsonResponse, "refresh_token")){
 				structInsert(stuResponse, "refresh_token", jsonResponse.refresh_token);
@@ -253,4 +340,96 @@ component accessors=true{
 
 		return stuResponse;
 	}
+
+
+	/**
+	* Make a request to FreshBooks
+	* @method The HTTP method call
+	* @url The url to make the request
+	* @body The body contents of the request
+	* @headers Request headers
+	* @paremeters Request parameters
+	* @timeout Request Timeout
+	* 
+	* @results struct = { error:boolean, response:struct, message, reponseHeader:struct, rawResponse }
+	*/
+	private struct function makeRequest(
+		string method = "GET",
+		required string url,
+		body = "",
+		struct headers = structNew(),
+		struct parameters = structNew(),
+		numeric timeout = 15
+	){
+
+		var results = { 
+			error 			= false,
+			response 		= {},
+			message 		= "",
+			responseheader 	= {},
+			rawResponse 	= "",
+			stacktrace		= ""
+		};
+		var HTTPResults = "";
+		var param 		= "";
+		var jsonRegex 	= "^(\{|\[)(.)*(\}|\])$";
+		
+		// Default Content Type
+		if( NOT structKeyExists( arguments.headers, "content-type" ) ){
+			arguments.headers[ "content-type" ] = "";
+		}
+
+		// Create HTTP object
+		var oHTTP = new HTTP(
+			method 			= arguments.method,
+			url 			= arguments.url,
+			charset 		= "utf-8",
+			timeout 		= arguments.timeout,
+			throwOnError 	= true
+		);
+
+		// Add Headers
+		for( var thisHeader in arguments.headers ){
+			oHTTP.addParam( type="header", name="#thisHeader#", value="#arguments.headers[ thisHeader ]#" );
+		}
+
+		// Add URL Parameters: encoded automatically by CF 
+		for( var thisParam in arguments.parameters ){
+			oHTTP.addParam( type="URL", name="#thisParam#", value="#arguments.parameters[ thisParam ]#" );
+		}
+		
+		// Body
+		if( len( arguments.body ) ){
+			oHTTP.addParam( type="body", value="#arguments.body#" );
+		}
+		
+		// Make the request
+		try{
+			var HTTPResults = oHTTP.send().getPrefix();
+
+			// Set Results
+			results.responseHeader 	= HTTPResults.responseHeader;
+			results.rawResponse 	= HTTPResults.fileContent.toString();
+			
+			// Error Details found?
+			results.message = HTTPResults.errorDetail;
+			if( len( HTTPResults.errorDetail ) ){ results.error = true; }
+			
+			// Try to inflate JSON
+			results.response = deserializeJSON( results.rawResponse, false );
+
+			// Verify response error?
+			if( results.response.error ){
+				results.error 	= true;
+				results.message = results.response.messages.toString();
+			}
+
+		} catch( Any e ) {
+			results.error 		= true;
+			results.message 	= e.message & e.detail;
+			results.stacktrace 	= e.stacktrace;
+		}
+		
+		return results;
+	}	
 }

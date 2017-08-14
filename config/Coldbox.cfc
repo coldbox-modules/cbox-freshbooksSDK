@@ -80,7 +80,10 @@ component{
 		moduleSettings = {
 
 			cbfreshbooks = {
-				APIToken = getAPITokenStruct()
+				APIToken = getAPITokenStruct(),
+				APIURL = "https://api.freshbooks.com/auth/oauth/token/",
+				authLink = "https://my.freshbooks.com/service/auth/oauth/",
+				redirectURI = "https://github.com/coldbox-modules/cbox-freshbooksSDK"
 			}
 
 		}
@@ -91,14 +94,9 @@ component{
 		var targetFile = expandPath( "/config/apiToken.cfm" );
 		// If local file token exists, use it.
 		if( fileExists( targetFile ) ){
-			var file = fileRead( targetFile );
-			var tokenStruct = {};
-			var clientId = ListGetAt(file, 1, ',');
-			var clientSecret = ListGetAt(file, 2, ',');
-
-			tokenStruct.clientId = clientId;
-			tokenStruct.clientSecret = clientSecret;
-			return tokenStruct;
+			include template="../config/apiToken.cfm";
+		
+			return APIToken;
 		}
 		// Check Java Environmennt
 		return getEnv( "FRESHBOOKS_API_TOKEN", "" );
