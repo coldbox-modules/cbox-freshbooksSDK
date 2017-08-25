@@ -81,6 +81,9 @@ component{
 
 			cbfreshbooks = {
 				APIToken = getAPITokenStruct(),
+				//APIToken.clientID = "",
+				//APIToken.clientSecret = "",
+				//APIToken.authorizationCode = "",
 				APIURL = "https://api.freshbooks.com/auth/oauth/token/",
 				authLink = "https://my.freshbooks.com/service/auth/oauth/",
 				redirectURI = "https://github.com/coldbox-modules/cbox-freshbooksSDK"

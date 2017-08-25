@@ -32,8 +32,14 @@ Create a `cbfreshbooks` struct inside of your `config/Coldbox.cfc` under the `mo
 moduleSettings = {
     // Freshbooks Module Settings
     cbfreshbooks = {
-        // The Freshbooks API Token
-        APIToken = "";
+		// The Freshbooks client ID and Client secret
+		APIToken.clientID = "",
+		APIToken.clientSecret = "",
+		//Authorization code obtained manually after allowing the access to the FreshBooks application (Authorization link is required)
+		APIToken.authorizationCode = "",
+		APIURL = "https://api.freshbooks.com/auth/oauth/token/",
+		authLink = "https://my.freshbooks.com/service/auth/oauth/",
+		redirectURI = ""
     }
 };
 ```
