@@ -6,7 +6,7 @@ component{
 		// coldbox directives
 		coldbox = {
 			//Application Setup
-			appName 				= "Development Shell",
+			appName 				= "Freshbooks SDK",
 
 			//Development Settings
 			reinitPassword			= "",
@@ -80,10 +80,10 @@ component{
 		moduleSettings = {
 
 			cbfreshbooks = {
-				APIToken = getAPITokenStruct(),
-				//APIToken.clientID = "",
-				//APIToken.clientSecret = "",
-				//APIToken.authorizationCode = "",
+				//APIToken = getAPITokenStruct(),
+				APIToken.clientID = "",
+				APIToken.clientSecret = "",
+				APIToken.authorizationCode = "",
 				APIURL = "https://api.freshbooks.com/auth/oauth/token/",
 				authLink = "https://my.freshbooks.com/service/auth/oauth/",
 				redirectURI = "https://github.com/coldbox-modules/cbox-freshbooksSDK"
