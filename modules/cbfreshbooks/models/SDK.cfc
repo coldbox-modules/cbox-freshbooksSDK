@@ -39,21 +39,30 @@ component accessors=true singleton threadsafe{
 	property name="identityInformation";
 
 	// DI
-	property name="log" inject="logbox:logger:{this}";
+	property name="log"          inject="logbox:logger:{this}";
+	property name="cachebox"	 inject="cachebox";
+
+	// Static Variables
+	variables.API_URL 			= "";
+	variables.AUTHORIZATION_URL	= "";
+	variables.CACHE_KEY			= "fb_sdk_oauth_token";
 
 	/**
 	* Constructor
 	* @settings The module settings
 	* @settings.inject coldbox:modulesettings:cbfreshbooks
+	* @cacheBox The CacheBox reference
+	* @cachebox.inject cachebox
 	*/
-	function init( settings ){
-		variables.settings = arguments.settings;
-		variables.APIURL = arguments.settings.APIURL;
-		variables.authLink = arguments.settings.authLink;
-		variables.redirectURI = arguments.settings.redirectURI;
-		variables.clientID = arguments.settings.APIToken.clientID;
-		variables.clientSecret = arguments.settings.APIToken.clientSecret;
+	function init( required settings, required cachebox ){
+		variables.settings          = arguments.settings;
+		variables.redirectURI       = arguments.settings.redirectURI;
+		variables.clientID          = arguments.settings.APIToken.clientID;
+		variables.clientSecret      = arguments.settings.APIToken.clientSecret;
 		variables.authorizationCode = arguments.settings.APIToken.authorizationCode;
+
+		// Load cache configured by user
+		variables.cache 			= cachebox.getCache( arguments.settings.cacheName );
 
 		return this;
 	}
@@ -85,28 +94,30 @@ component accessors=true singleton threadsafe{
 	* @results struct = { access_token:string, expires_in:date, expires_in_raw:number, refresh_token:string, success:boolean, token_type:string } 
 	*/
 	function authenticate(){
-		//check if the token struct exists in the session and returns it if it has not expired
-		if ( isDefined( "session.tokenStruct" ) AND session.tokenStruct.success 
-												AND dateCompare(now(), parseDateTime(session.tokenStruct.expires_in), "n") <= 0 ){
-			return session.tokenStruct;
-		}
-		else if( len(getTokenAccess() ) AND len( getRefreshToken() ) ){
+		var tokenStruct = cache.get( variables.CACHE_KEY );
+
+		if( !isNull( tokenStruct ) AND
+			tokenStruct.success AND
+			dateCompare( now(), parseDateTime( tokenStruct.expires_in ), "n" ) <= 0
+		){
+			return tokenStruct;
+		} else if( len( getTokenAccess() ) AND len( getRefreshToken() ) ){
 			return this.refreshToken( getRefreshToken() );
 		}
+
 		var body = {};
 		var headers = {};
 		var APIURL = getAPIURL();
-		response = {};
 		headers [ "Content-Type" ] = "application/json" ;
 		headers [ "Api-Version" ] = "alpha" ;
 		
-		body['grant_type'] = "authorization_code";
-		body['client_secret'] = "#getClientSecret()#";
-		body['code'] = "#getAuthorizationCode()#";
-		body['client_id'] = "#getClientID()#";
-		body['redirect_uri'] = "#getRedirectURI()#";
+		body[ "grant_type" ]    = "authorization_code";
+		body[ "client_secret" ] = "#getClientSecret()#";
+		body[ "code" ]          = "#getAuthorizationCode()#";
+		body[ "client_id" ]     = "#getClientID()#";
+		body[ "redirect_uri" ]  = "#getRedirectURI()#";
 
-		response = makeRequest( method="POST", url=APIURL, body=body, headers=headers );
+		var response = makeRequest( method="POST", url=APIURL, body=body, headers=headers );
 		return authResponse( response );
 	}
 
@@ -159,6 +170,7 @@ component accessors=true singleton threadsafe{
 			structInsert( stuResponse, "access_token", "Authorization Failed " & response.message );
 			structInsert( stuResponse, "success", false );
 		}
+		
 		session.tokenStruct = stuResponse;
 
 		return stuResponse;
@@ -291,7 +303,7 @@ component accessors=true singleton threadsafe{
 		var endpoint = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 		 				   "/users/clients/"& arguments.clientID;
 
-		userDataToUpdate[ "client"] = arguments.userInfo;
+		userDataToUpdate[ "client" ] = arguments.userInfo;
 
 		var result =  makeRequest( method="PUT", url=endpoint, headers=headers, body=userDataToUpdate );
 

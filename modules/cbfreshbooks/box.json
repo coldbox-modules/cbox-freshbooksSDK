@@ -1,23 +1,21 @@
 {
-    "name"      : "ColdBox Module Template",
-    "author"    : "Ortus Solutions <info@ortussolutions.com",
-    "location"  : "http://downloads.ortussolutions.com.s3.amazonaws.com/ortussolutions/coldbox-modules/cbdebugger/@build.version@/cbdebugger-@build.version@.zip",
-    "version"   : "@build.version@+@build.number@",
-    "slug"      : "cbModule",
-    "type"      : "modules",
-    "homepage"  : "https://github.com/coldbox-modules/cbox-debugger",
-    "bugs"      : "https://github.com/coldbox-modules/cbox-debugger/issues",
-    "documentation"     : "https://github.com/coldbox-modules/cbox-debugger",
-    "repository"        : { "type" : "git", "url" : "https://github.com/coldbox-modules/cbox-debugger" },
-    "shortDescription"  : "Your awesome module",
-    "license"           : [ 
-        { "type" : "Apache2", "url" : "http://www.apache.org/licenses/LICENSE-2.0.html" } 
+    "name": "Freshbooks CFML SDK",
+    "author": "Ortus Solutions <info@ortussolutions.com",
+    "location": "http://downloads.ortussolutions.com.s3.amazonaws.com/ortussolutions/coldbox-modules/cbfreshbooks/@build.version@/cbfreshbooks-@build.version@.zip",
+    "version": "@build.version@+@build.number@",
+    "slug": "cbModule",
+    "type": "modules",
+    "homepage": "https://github.com/coldbox-modules/cbox-freshbooksSDK",
+    "bugs": "https://github.com/coldbox-modules/cbox-freshbooksSDK/issues",
+    "documentation": "https://github.com/coldbox-modules/cbox-freshbooksSDK",
+    "repository": { "type": "git", "url": "https://github.com/coldbox-modules/cbox-freshbooksSDK" },
+    "shortDescription": "The unofficial Freshbooks SDK for CFML.",
+    "license": [
+        { "type": "Apache2", "url": "http://www.apache.org/licenses/LICENSE-2.0.html" }
     ],
-    "contributors"      : [
-    ],
-    "dependencies"  :{
-    },
-    "ignore":[
+    "contributors": [],
+    "dependencies": {},
+    "ignore": [
         "**/.*",
         "tests",
         "*/.md"
