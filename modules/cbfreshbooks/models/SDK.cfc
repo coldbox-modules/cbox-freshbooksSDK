@@ -1193,6 +1193,65 @@ component accessors=true singleton threadsafe{
 	}
 
 	/**
+	* Create tax
+	* @accountID The account ID Associated with the tax to create
+	* @taxInfo struct with the tax's info to create a new entry
+	* @results tax: { accounting_systemid, updated, name, number, taxid, amount, compound, id }
+	*/
+	function createTax( required String accountID, required struct taxInfo ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/taxes/taxes";
+
+		var result =  makeRequest( method="POST", headers=headers, url=endpoint, body=arguments.taxInfo );
+		if( result.error ){
+			throw result.message;
+		}
+		return result.response.response.result.tax;
+	}
+
+	/**
+	* update tax
+	* @accountID The account ID Associated with the tax to update
+	* @taxID Id of the tax to update
+	* @taxInfo struct with the tax's info to update a new entry
+	* @results tax: { accounting_systemid, updated, name, number, taxid, amount, compound, id }
+	*/
+	function updateTax( required String accountID, required String taxID, required struct taxInfo ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
+						 "/taxes/taxes/" & arguments.taxID;
+
+		var result =  makeRequest( method="PUT", headers=headers, url=endpoint, body=arguments.taxInfo );
+		if( result.error ){
+			throw result.message;
+		}
+		return result.response.response.result.tax;
+	}
+
+	/**
+	* delete tax
+	* @accountID The account ID Associated with the tax to delete
+	* @taxID Id of the tax to delete
+	* @taxInfo struct with the tax's info to delete
+	*/
+	function deleteTax( required String accountID, required String taxID ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
+						 "/taxes/taxes/" & arguments.taxID;
+
+		var result =  makeRequest( method="DELETE", headers=headers, url=endpoint );
+		if( result.error ){
+			throw result.message;
+		}
+	}
+
+	/**
 	* Get the list of the staff
 	* @accountID The account ID of the staff to list
 	* @results array of structs -> [ {fax, rate, num_logins, api_token, id, note, display_name, lname, mob_phone, last_login, home_phone, email, 
@@ -1246,6 +1305,51 @@ component accessors=true singleton threadsafe{
 	}
 
 	/**
+	* update a staff member
+	* @accountID The account ID Associated with the staff member to update
+	* @staffID Id of the staff member to update
+	* @staffInfo struct with the staff's info to update a new entry
+	* @results struct {fax, rate, num_logins, api_token, id, note, display_name, lname, mob_phone, last_login, home_phone, email, username,
+	* 				   updated, p_province, p_city, p_code, p_country, accounting_systemid, bus_phone, signup_date, language, level, userid,
+	* 				   p_street2, vis_state, fname, organization, p_street, currency_code}
+	*/
+	function updateStaff( required String accountID, required String staffID, required struct staffInfo ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
+						 "/users/staffs/" & arguments.taxID;
+
+		var result =  makeRequest( method="PUT", headers=headers, url=endpoint, body=arguments.staffInfo );
+		if( result.error ){
+			throw result.message;
+		}
+		return result.response.response.result.staff;
+	}
+
+	/**
+	* delete a staff member
+	* @accountID The account ID Associated with the staff member to delete
+	* @staffID Id of the staff member to delete
+	* @staffInfo struct with the staff's info to delete
+	* @results struct {fax, rate, num_logins, api_token, id, note, display_name, lname, mob_phone, last_login, home_phone, email, username,
+	* 				   updated, p_province, p_city, p_code, p_country, accounting_systemid, bus_phone, signup_date, language, level, userid,
+	* 				   p_street2, vis_state, fname, organization, p_street, currency_code}
+	*/
+	function deleteStaff( required String accountID, required String staffID, required struct staffInfo ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
+						 "/users/staffs/" & arguments.taxID;
+
+		var result =  makeRequest( method="PUT", headers=headers, url=endpoint, body=arguments.staffInfo );
+		if( result.error ){
+			throw result.message;
+		}
+	}
+
+	/**
 	* Get time entries
 	* @businessID The business ID associated with the time entries
 	* @results struct -> time_entries { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
@@ -1296,6 +1400,69 @@ component accessors=true singleton threadsafe{
 			projectsList.append( project );
 		}
 		return projectsList;
+	}
+
+	/**
+	* Create time entry
+	* @accountID The account ID Associated with the time entry to create
+	* @businessID The business ID associated with the time entry to create
+	* @timeEntryInfo struct with the time entry's info to create a new entry
+	* @results struct -> time_entry { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
+	* 									meta { pages, total_logged, total_unbilled, per_page, total, page } }
+	*/
+	function createTimeEntry( required String accountID, required String businessID, required struct timeEntryInfo ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/timetracking/business/" & arguments.businessID & "/time_entries";
+
+		var result =  makeRequest( method="POST", headers=headers, url=endpoint, body=arguments.timeEntryInfo );
+		if( result.error ){
+			throw result.message;
+		}
+		return result.response.time_entry;
+	}
+
+	/**
+	* Update time entry
+	* @accountID The account ID Associated with the time entry to update
+	* @businessID The business ID associated with the time entry to update
+	* @timeEntryID Id of the time entry to update
+	* @timeEntryInfo struct with the time entry's info to update
+	* @results struct -> time_entry { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
+	* 									meta { pages, total_logged, total_unbilled, per_page, total, page } }
+	*/
+	function UpdateTimeEntry( required String accountID, required String businessID, required String timeEntryID, required struct timeEntryInfo ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/timetracking/business/" & arguments.businessID &
+						 "/time_entries/" & arguments.timeEntryID;
+
+		var result =  makeRequest( method="PUT", headers=headers, url=endpoint, body=arguments.timeEntryInfo );
+		if( result.error ){
+			throw result.message;
+		}
+		return result.response.time_entry;
+	}
+
+	/**
+	* Delete time entry
+	* @accountID The account ID Associated with the time entry to create
+	* @businessID The business ID associated with the time entry to create
+	* @timeEntryID Id of the time entry to update
+	*/
+	function DeleteTimeEntry( required String accountID, required String businessID, required String timeEntryID ){
+		var headers = {};
+		headers [ "Api-Version" ] = "alpha";
+		headers[ "Authorization" ] = "Bearer " & getTokenAccess();
+		var endpoint = "https://api.freshbooks.com/timetracking/business/" & arguments.businessID &
+						 "/time_entries/" & arguments.timeEntryID;
+
+		var result =  makeRequest( method="DELETE", headers=headers, url=endpoint, body=arguments.timeEntryInfo );
+		if( result.error ){
+			throw result.message;
+		}
 	}
 
 	/**
