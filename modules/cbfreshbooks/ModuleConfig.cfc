@@ -23,8 +23,6 @@ component{
 	this.cfmapping			= "cbfreshbooks";
 	// Auto-map models
 	this.autoMapModels		= true;
-	// Module Dependencies That Must Be Loaded First, use internal names or aliases
-	this.dependencies		= [ "cbstorages" ];
 
 	/**
 	* Configure module
@@ -32,10 +30,13 @@ component{
 	function configure(){
 
 		settings = {
-			// The Freshbooks API Token
-			APIToken = {
-				
-			},
+			// The Freshbooks API authetication credentials
+			authentication_credentials = {
+					clientID = "",
+					clientSecret = "",
+					authorizationCode = ""
+				},
+			redirectURI = "",
 			// CacheBox Cache Name for oAuth credentials
 			cacheName = "default"
 		}

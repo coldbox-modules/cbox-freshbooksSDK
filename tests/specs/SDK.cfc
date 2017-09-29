@@ -31,8 +31,8 @@ component extends="coldbox.system.testing.BaseTestCase"{
 			});
 
 			it( "can register the APIToken in the SDK", function(){
-				expect( sdk.getAPITokenStruct() ).notToBeEmpty();
-				expect( sdk.getAPITokenStruct() ).toBeStruct();
+				expect( sdk.getAuthenticationCredentials() ).notToBeEmpty();
+				expect( sdk.getAuthenticationCredentials() ).toBeStruct();
 			});
 
 			describe( "Authentication Mechanisms", function(){
@@ -73,61 +73,63 @@ component extends="coldbox.system.testing.BaseTestCase"{
 				it( "can get the list of clients" , function(){
 					var clientsList = sdk.getClients( "EalP4" );
 					expect ( clientsList ).toBeArray();
-					//writeDump( clientsList );
 				});
 				it( "can get a single client" , function(){
 					var singleCLient = sdk.getSingleClient( "EalP4", "152604" );
 					expect ( singleCLient.fname ).toBe ( "Javier" );
 				});
 				it( "can create a single client" , function(){
-					var userInfo = {};
-					userInfo[ "fname"] = "Mike";
-					userInfo[ "email" ] = "Mike@ortus.com";
-					userInfo[ "organization"] = "Ortus";
-					userInfo[ "home_phone" ] = "8326759836";
-					//var clien = sdk.createSingleClient( userInfo , "EalP4");
-					//writeDump(clien);
+					var clientDetails               = {};
+					clientDetails[ "fname" ]        = "Carlos";
+					clientDetails[ "email" ]        = "Carlos@ortus.com";
+					clientDetails[ "organization" ] = "Ortus";
+					clientDetails[ "home_phone" ]   = "8326754346";
+					var newClient[ "client"]        = clientDetails;
+					var result                      = sdk.createSingleClient( "EalP4", newClient );
 				});
 				it( "can update a single client" , function(){
-					var userInfo = {};
-					userInfo[ "fname"] = "Miky";
-					var singleCLient = sdk.updateSingleClient( "EalP4", "164816", userInfo );
-					expect ( singleCLient.fname ).toBe ( "Miky" );
+					var clientDetails            = {};
+					clientDetails[ "fname" ]     = "Alexis";
+					var updateClient[ "client" ] = clientDetails;
+					var result                   = sdk.updateSingleClient( "EalP4", "180007", updateClient );
+					expect ( result.fname ).toBe ( "Alexis" );
 				});
 				it( "can delete a single client" , function(){
-					var userInfo = {};
-					userInfo[ "vis_state"] = 1;
-					var singleCLient = sdk.updateSingleClient( "EalP4", "164816", userInfo );
-					expect ( singleCLient.vis_state ).toBe ( 1 );
+					var clientDetails             = {};
+					clientDetails[ "vis_state" ]  = 1;
+					var deleteClient [ "client" ] = clientDetails;
+					sdk.deleteSingleClient( "EalP4", "164816", deleteClient );
 				});
 				it( "can list the expenses" , function(){
 					var expensesList = sdk.getExpensesList( "EalP4" );
 					expect ( expensesList ).toBeArray();
-
 				});
 				it( "can get an expense by id" , function(){
 					var expense = sdk.getExpenseById( "EalP4", "1119673"  );
 					expect ( expense.amount.amount ).toBe( 125.00 );
 				});
 				it( "can create an expense" , function(){
-					var expenseInfo = {};
-					expenseInfo["amount"]["amount"] = 39.991;
-					expenseInfo["categoryid"] = "5094363";
-					expenseInfo["staffid"] = 1;
-					expenseInfo["date"] = "2017-09-11";
-					//var expense = sdk.createExpense( "EalP4", expenseInfo );
-					//expect ( expense.categoryid ).toBe( "5094363" );
+					var expenseDetails                     = {};
+					expenseDetails[ "amount" ][ "amount" ] = 49.991;
+					expenseDetails[ "categoryid" ]         = "5094363";
+					expenseDetails[ "staffid" ]            = 1;
+					expenseDetails[ "date" ]               = "2017-09-28";
+					var expense[ "expense" ]               = expenseDetails;
+					//var result                           = sdk.createExpense( "EalP4", expense );
+					//expect ( result.categoryid ).toBe( "5094363" );
 				});
 				it( "can update a single expense" , function(){
-					var expenseInfo = {};
-					expenseinfo[ "vendor" ] = "Ortus Vendor";
-					var expense = sdk.updateExpense( "EalP4", "1119673", expenseInfo );
-					//writeDump( expense );
+					var expenseDetails         = {};
+					expenseDetails[ "vendor" ] = "Other Vendor";
+					var expense[ "expense"]    = expenseDetails;
+					var result                 = sdk.updateExpense( "EalP4", "1119673", expense );
+					expect ( result.vendor ).toBe( "Other Vendor" );
 				});
 				it( "can delete a single expense" , function(){
-					var expenseFlag = {};
-					expenseFlag[ "vis_state" ] = 1;
-					//var expense = sdk.deleteExpense( "EalP4", "1119673", expenseFlag );
+					var expenseDetails            = {};
+					expenseDetails[ "vis_state" ] = 1;
+					var expense [ "expense" ]     = expenseDetails;
+					//sdk.deleteExpense( "EalP4", "1119673", expense );
 				});
 				it( "can list the invoices" , function(){
 					var invoicesList = sdk.getInvoicesList( "EalP4" );
@@ -138,24 +140,27 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					expect ( invoice.payment_status ).toBe( "partial" );
 				});
 				it( "can create an invoice" , function(){
-					var invoiceInfo = {};
-					invoiceInfo[ "email" ] = "testingInvoice@ortus.com";
-					invoiceInfo[ "customerid" ] = "156482";
-					invoiceInfo[ "create_date" ] = "2017-09-13";
-					//var invoice = sdk.createInvoice( "EalP4", invoiceInfo );
-					//expect ( invoice.auto_bill ).notToBe( true );
+					var invoiceDetails              = {};
+					invoiceDetails[ "email" ]       = "testingInvoice2@ortus.com";
+					invoiceDetails[ "customerid" ]  = "156482";
+					invoiceDetails[ "create_date" ] = "2017-09-28";
+					invoice[ "invoice"]             = invoiceDetails;
+					
+					//var result                    = sdk.createInvoice( "EalP4", invoice );
+					//expect ( result.auto_bill ).notToBe( true );
 				});
 				it( "can update a single invoice" , function(){
-					var invoiceInfo = {};
-					invoiceInfo[ "customerid" ] = "156482";
-					invoiceInfo[ "create_date" ] = "2017-09-12";
-					var invoice = sdk.updateInvoice( "EalP4", "755890", invoiceInfo );
-					//writeDump( invoice );
+					var invoiceDetails              = {};
+					invoiceDetails[ "customerid" ]  = "156482";
+					invoiceDetails[ "create_date" ] = "2017-09-12";
+					var invoice[ "invoice"]         = invoiceDetails;
+					var result                      = sdk.updateInvoice( "EalP4", "755890", invoice );
 				});
 				it( "can delete an invoice" , function(){
-					var invoiceFlag = {};
+					var invoiceFlag            = {};
 					invoiceFlag[ "vis_state" ] = 1;
-					//var invoice = sdk.deleteInvoice( "EalP4", "755890", invoiceFlag );
+					var invoice[ "invoice"]    = invoiceFlag;
+					//sdk.deleteInvoice( "EalP4", "755890", invoice );
 				});
 				it( "can list expense categories" , function(){
 					var expenseCategories = sdk.getExpenseCategoriesList( "EalP4" );
@@ -179,24 +184,28 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					expect ( estimate.invoiced ).toBe( false );
 				});
 				it( "can create an estimate" , function(){
-					var estimateInfo = {};
-					estimateInfo[ "email" ] = "test@example";
-					estimateInfo[ "customerid" ] = "156482";
-					estimateInfo[ "create_date" ] = "2017-09-13";
-					//var estimate = sdk.createEstimate( "EalP4", estimateInfo );
-					//expect ( estimate.status ).toBe( 1 );
+					var estimateDetails              = {};
+					estimateDetails[ "email" ]       = "test2@example";
+					estimateDetails[ "customerid" ]  = "156482";
+					estimateDetails[ "create_date" ] = "2017-09-28";
+					estimate[ "estimate"]            = estimateDetails;
+
+					var result = sdk.createEstimate( "EalP4", estimate );
+					expect ( result.status ).toBe( 1 );
 				});
 				it( "can update an estimate" , function(){
-					var estimateInfo = {};
-					estimateInfo[ "customerid" ] = "156482";
-					estimateInfo[ "create_date" ] = "2017-09-12";
-					var estimate = sdk.updateEstimate( "EalP4", "260285", estimateInfo );
-					expect ( estimate.ui_status ).toBe( "draft" );
+					var estimateDetails              = {};
+					estimateDetails[ "customerid" ]  = "156482";
+					estimateDetails[ "create_date" ] = "2017-09-28";
+					estimate[ "estimate"]            = estimateDetails;
+					var result                       = sdk.updateEstimate( "EalP4", "260285", estimate );
+					expect ( result.ui_status ).toBe( "draft" );
 				});
 				it( "can delete an estimate" , function(){
-					var estimateFlag = {};
-					estimateInfo[ "vis_state" ] = 1;
-					//var estimate = sdk.deleteEstimate( "EalP4", "260285", estimateInfo );
+					var estimateFlag            = {};
+					estimateFlag[ "vis_state" ] = 1;
+					estimate[ "estimate"]       = estimateFlag;
+					//sdk.deleteEstimate( "EalP4", "260285", estimate );
 				});
 				it( "can list items" , function(){
 					var items = sdk.getItemsList( "EalP4" );
@@ -208,24 +217,24 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					expect ( item ).toBeEmpty();
 				});
 				it( "can create a single item" , function(){
-					var itemInfo = {};
-					itemInfo[ "name" ] = "Test item";
-					//var item = sdk.createItem( "EalP4", itemInfo );
-					//expect ( item ).toBeEmpty();
+					var itemDetails       = {};
+					itemDetails[ "name" ] = "One more item";
+					var item [ "item" ]   = itemDetails;
+					//var result          = sdk.createItem( "EalP4", item );
+					//expect ( result ).notToBeEmpty();
 				});
 				it( "can update an item" , function(){
-					var itemDetails = {};
-					var item = {};
+					var itemDetails       = {};
 					itemDetails[ "name" ] = "Updated item";
-					item[ "item" ] = itemDetails
-					var itemResult = sdk.updateItem( "EalP4", "186088", item );
-					expect ( itemResult.name ).toBe( "Updated item" );
+					var item[ "item" ]    = itemDetails;
+					var result            = sdk.updateItem( "EalP4", "186088", item );
+					expect ( result.name ).toBe( "Updated item" );
 				});
 				it( "can delete an item" , function(){
-					var item = {};
-					var itemDetails = {};
+					var item                   = {};
+					var itemDetails            = {};
 					itemDetails[ "vis_state" ] = 1; 
-					item[ "item" ] = itemDetails;
+					item[ "item" ]             = itemDetails;
 					//sdk.deleteItem( "EalP4", "186088", item );
 				});
 				it( "can list payments" , function(){
@@ -237,30 +246,28 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					expect ( payment ).toBeEmpty();
 				});
 				it( "can create a payment" , function(){
-					var paymentDetails = {};
-					var payment = {};
-					var amount[ "amount" ] = "10.00";
+					var paymentDetails            = {};
+					var amount[ "amount" ]        = "10.00";
 					paymentDetails[ "invoiceid" ] = 725686;
-					paymentDetails[ "amount" ] = amount;
-					paymentDetails[ "date" ] = "2017-09-15";
-					paymentDetails[ "type" ] = "Check";
-					payment[ "payment" ] = paymentDetails;
-					//var paymentResult = sdk.createPayment( "EalP4", payment );
-					//expect ( paymentResult.type ).toBe( "Check" );
+					paymentDetails[ "amount" ]    = amount;
+					paymentDetails[ "date" ]      = "2017-09-15";
+					paymentDetails[ "type" ]      = "Check";
+					var payment[ "payment" ]      = paymentDetails;
+					//var result                  = sdk.createPayment( "EalP4", payment );
+					//expect ( result.type ).toBe( "Check" );
 				});
 				it( "can update a payment" , function(){
-					var paymentDetails = {};
-					var payment = {};
+					var paymentDetails            = {};
+					var payment                   = {};
 					paymentDetails[ "invoiceid" ] = 755890;
-					payment[ "payment" ] = paymentDetails;
-					//var paymentResult = sdk.updatePayment( "EalP4", 136088, payment );
-					//expect ( paymentResult.invoiceid ).toBe( 755890 );
+					payment[ "payment" ]          = paymentDetails;
+					//var result                  = sdk.updatePayment( "EalP4", 136088, payment );
+					//expect ( result.invoiceid ).toBe( 755890 );
 				});
 				it( "can delete a payment" , function(){
-					var paymentDetails = {};
-					var payment = {};
+					var paymentDetails            = {};
 					paymentDetails[ "vis_state" ] = 1;
-					payment[ "payment" ] = paymentDetails;
+					var payment[ "payment" ]      = paymentDetails;
 					//sdk.deletePayment( "EalP4", 136088, payment );
 				});
 				it( "can list taxes" , function(){
@@ -272,20 +279,18 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					expect ( tax ).toBeEmpty();
 				});
 				it( "can create a single tax" , function(){
-					var taxDetails = {};
-					var tax = {};
+					var taxDetails       = {};
 					taxDetails[ "name" ] = "some tax";
-					tax[ "tax" ] = taxDetails;
-					//var taxResult = sdk.createTax( "EalP4", tax );
-					//expect ( taxResult.name ).toBe( "some tax" );
+					var tax[ "tax" ]     = taxDetails;
+					//var result         = sdk.createTax( "EalP4", tax );
+					//expect ( result.name ).toBe( "some tax" );
 				});
 				it( "can update a single tax" , function(){
 					var taxDetails = {};
-					var tax = {};
 					taxDetails[ "name" ] = "other tax";
-					tax[ "tax" ] = taxDetails;
-					var taxResult = sdk.updateTax( "EalP4", "12283", tax );
-					expect ( taxResult.name ).toBe( "other tax" );
+					var tax[ "tax" ] = taxDetails;
+					var result = sdk.updateTax( "EalP4", "12283", tax );
+					expect ( result.name ).toBe( "other tax" );
 				});
 				it( "can delete a single tax" , function(){
 					//sdk.deleteTax( "EalP4", "12282" );
@@ -300,11 +305,10 @@ component extends="coldbox.system.testing.BaseTestCase"{
 				});
 				it( "can update a staff member" , function(){
 					var staffDetails = {};
-					var staff = {};
 					staffDetails[ "organization" ] = "Ortus Solutions";
-					staff[ "staff" ] = staffDetails;
-					var staffResult = sdk.updateStaff( "EalP4", 1, staff );
-					expect ( staffResult.organization ).toBe( "Ortus Solutions" );
+					var staff[ "staff" ] = staffDetails;
+					var result = sdk.updateStaff( "EalP4", 1, staff );
+					expect ( result.organization ).toBe( "Ortus Solutions" );
 				});
 				it( "can delete a staff member" , function(){
 					// this method has not been tested. I do not want to delete the only user :)
@@ -315,32 +319,31 @@ component extends="coldbox.system.testing.BaseTestCase"{
 				it( "can list time entries" , function(){
 					var timeEntries = sdk.getTimeEntries( "400641" );
 					expect ( timeEntries ).toBeArray();
+					writeDump( timeEntries );
 				});
 				it( "can create a time entry" , function(){
 					var entryDetails = {};
-					var entry = {};
 					entryDetails[ "is_logged" ] = true;
 					entryDetails[ "duration" ] = 7200;
 					entryDetails[ "note" ] = "stuff";
 					entryDetails[ "started_at" ] = "2017-09-25T20:00:00.000z";
 					entryDetails[ "client_id" ] = "164816";
 					entryDetails[ "project_id" ] = "831050";
-					entry[ "time_entry" ] = entryDetails;
-					var timeEntryResult = sdk.createTimeEntry( "EalP4", "400641", entry );
-					expect ( timeEntryResult.duration ).toBe( 7200 );
+					var entry[ "time_entry" ] = entryDetails;
+					//var result = sdk.createTimeEntry( "EalP4", "400641", entry );
+					//expect ( result.duration ).toBe( 7200 );
 				});
 				it( "can update a time entry" , function(){
 					var timeEntryDetails = {};
-					var timeEntry = {};
 					timeEntryDetails[ "is_logged" ] = true;
 					timeEntryDetails[ "duration" ] = 600;
 					timeEntryDetails[ "note" ] = "updated Note";
 					timeEntryDetails[ "started_at" ] = "2017-09-25T10:00:00.000z";
 					timeEntryDetails[ "client_id" ] = "164816";
 					timeEntryDetails[ "project_id" ] = "831050";
-					timeEntry[ "staff" ] = timeEntryDetails;
-					//var staffResult = sdk.updateStaff( "EalP4", 1, staff );
-					//expect ( staffResult.organization ).toBe( "Ortus Solutions" );
+					var timeEntry[ "staff" ] = timeEntryDetails;
+					//var result = sdk.updateTimeEntry( "EalP4", 1, staff );
+					//expect ( result.organization ).toBe( "Ortus Solutions" );
 				});
 				it( "can delete a time entry" , function(){
 					//sdk.deleteTimeEntry( "EalP4", "businessid", "timeentryId" );

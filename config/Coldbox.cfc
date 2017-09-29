@@ -80,12 +80,12 @@ component{
 		moduleSettings = {
 
 			cbfreshbooks = {
-				//APIToken = getAPITokenStruct(),
-				APIToken.clientID = "",
-				APIToken.clientSecret = "",
-				APIToken.authorizationCode = "",
-				APIURL = "https://api.freshbooks.com/auth/oauth/token/",
-				authLink = "https://my.freshbooks.com/service/auth/oauth/",
+				authentication_credentials = getAPITokenStruct(),
+				/**authentication_credentials = {
+					clientID = "",
+					clientSecret = "",
+					authorizationCode = ""
+				},*/
 				redirectURI = "https://github.com/coldbox-modules/cbox-freshbooksSDK"
 			}
 
@@ -99,7 +99,7 @@ component{
 		if( fileExists( targetFile ) ){
 			include template="../config/apiToken.cfm";
 		
-			return APIToken;
+			return authentication_credentials;
 		}
 		// Check Java Environmennt
 		return getEnv( "FRESHBOOKS_API_TOKEN", "" );

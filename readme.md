@@ -31,16 +31,14 @@ Create a `cbfreshbooks` struct inside of your `config/Coldbox.cfc` under the `mo
 // Module Settings
 moduleSettings = {
     // Freshbooks Module Settings
-    cbfreshbooks = {
-		// The Freshbooks client ID and Client secret
-		APIToken.clientID = "",
-		APIToken.clientSecret = "",
-		//Authorization code obtained manually after allowing the access to the FreshBooks application (Authorization link is required)
-		APIToken.authorizationCode = "",
-		APIURL = "https://api.freshbooks.com/auth/oauth/token/",
-		authLink = "https://my.freshbooks.com/service/auth/oauth/",
-		redirectURI = ""
-    }
+			cbfreshbooks = {
+				authentication_credentials = {
+					clientID = "",
+					clientSecret = "",
+					authorizationCode = ""
+				},
+				redirectURI = ""
+			}
 };
 ```
 
@@ -50,19 +48,65 @@ The module will register the sdk for you as:
 
 * `SDK@cbfreshbooks`
 
-## Implemented Endpoints
+## Implemented Endpoints and methods
 
-* Authentication
-* Categories
 * Clients
-* Estimates
+	Get Single Client: 
+	Create Single Client
+	Update SIngle Client
+	Delete Single Client
+	List Clients
+* Expenses
+	Get Expense
+	Create Expense
+	Update Single Expense
+	Delete Single Expense
+	List Expenses
+* Gateways
+	List Gateways
 * Invoices
+	Get Single Invoice
+	Create Single Invoice
+	Update Single Invoice
+	Delete Single Invoice
+	List Invoices
+* Expense Categories
+	Get Single Expense Category
+	List Expense Categories
+* Estimates
+	Get Single Estimate
+	Create Single Estimate
+	Update Single Estimate
+	Delete SIngle Estimate
+	List Estimates 
 * Items
-* Projects
-* Recurring
-* System
+	Get Single Item
+	Create Single Item
+	Update Single Item
+	Delete SIngle Item
+	List Items
+* Payments
+	Get Single Payment
+	Create Single Payment
+	Update Single Payment
+	Delete Single Payment
+	List Payments
+* Taxes
+	Get Single Tax
+	Create SIngle Tax
+	Update Single Tax
+	Delete Single Tax
+	List Taxes
+* Staff
+	Get Single Staff
+	Update SIngle Staff
+	Delete Single Staff
+	List Staff
 * Time Entries
-* Reports
+	Fetch Time Entries
+	Create a Time Entry
+	Update a Time Entry
+	Delete a TIme Entry
 
 
 
