@@ -80,13 +80,13 @@ component{
 		moduleSettings = {
 
 			cbfreshbooks = {
-				authentication_credentials = getAPITokenStruct(),
-				/**authentication_credentials = {
+				//authentication_credentials = getAPITokenStruct(),
+				authentication_credentials = {
 					clientID = "",
 					clientSecret = "",
 					authorizationCode = ""
-				},*/
-				redirectURI = "https://github.com/coldbox-modules/cbox-freshbooksSDK"
+				},
+				redirectURI = ""
 			}
 
 		}

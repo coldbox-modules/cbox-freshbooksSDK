@@ -196,8 +196,7 @@ component accessors=true singleton threadsafe{
 			throw( "Client id cannot be null or empty");
 		}
 		var endpoint = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
-		"/users/clients/" & arguments.clientID;
-		
+						"/users/clients/" & arguments.clientID;
 		var result   =  makeRequest( url=endpoint );
 
 		if( result.error ){
@@ -240,8 +239,7 @@ component accessors=true singleton threadsafe{
 	* @clientID Id of the client to update
 	* @results struct -> { allow_late_notifications, updated, last_activity, s_code, vat_number, pref_email, id, direct_link_token, s_province, lname, s_country, s_street2, statement_token, note, mob_phone, role, home_phone, last_login, company_industry, subdomain, email, username, fax, fname, vat_name, p_city, p_code, allow_late_fees, s_street, p_country, company_size, accounting_systemid, bus_phone, p_province, signup_date, language, level, notified, userid, p_street2, pref_gmail, vis_state, s_city, num_logins, organization, p_street, currency_code }
 	*/
-	function updateSingleClient( required String accountID, required String clientID, required struct userInfo ){
-		var userDataToUpdate         = {};
+	struct function updateSingleClient( required String accountID, required String clientID, required struct userInfo ){
 		var endpoint                 = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 										"/users/clients/"& arguments.clientID;
 				
@@ -278,7 +276,7 @@ component accessors=true singleton threadsafe{
 	* @results an array of structs with the list of expenses -> expenses [ {expense1},{expense2},{expense3},... ]
 	* expense -> { categoryid, markup_percent, projectid, clientid, isduplicate, taxName2, taxName1, taxPercent1, profileid, taxPercent2, id, invoiceid, account_name, taxAmount2, taxAmount1, vis_state, status, bank_name, updated, vendor, has_receipt, ext_systemid, staffid, date, transactionid, include_receipt, accounting_systemid, background_jobid, notes, ext_invoiceid, amount, expenseid, compounded_tax, accountid }
 	*/
-	function getExpensesList( required String accountID ){
+	array function getExpensesList( required String accountID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/expenses/expenses";	
 		var result   =  makeRequest( url=endpoint );
 		if( result.error ){
@@ -297,7 +295,7 @@ component accessors=true singleton threadsafe{
 	* @expenseID Id of the expense to return
 	* @results expense -> { categoryid, markup_percent, projectid, clientid, isduplicate, taxName2, taxName1, taxPercent1, profileid, taxPercent2, id, invoiceid, account_name, taxAmount2, taxAmount1, vis_state, status, bank_name, updated, vendor, has_receipt, ext_systemid, staffid, date, transactionid, include_receipt, accounting_systemid, background_jobid, notes, ext_invoiceid, amount, expenseid, compounded_tax, accountid }
 	*/
-	function getExpenseById( required String accountID, required String expenseID ){
+	struct function getExpenseById( required String accountID, required String expenseID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/expenses/expenses/"& arguments.expenseID;	
 		var result   =  makeRequest( url=endpoint );
@@ -317,7 +315,7 @@ component accessors=true singleton threadsafe{
 	* @accountID The account ID where the expense will be created in
 	* @results expense -> { categoryid, markup_percent, projectid, clientid, isduplicate, taxName2, taxName1, taxPercent1, profileid, taxPercent2, id, invoiceid, account_name, taxAmount2, taxAmount1, vis_state, status, bank_name, updated, vendor, has_receipt, ext_systemid, staffid, date, transactionid, include_receipt, accounting_systemid, background_jobid, notes, ext_invoiceid, amount, expenseid, compounded_tax, accountid }
 	*/
-	function createExpense( required String accountID, required struct expenseInfo ){
+	struct function createExpense( required String accountID, required struct expenseInfo ){
 		var newExpense         = {};
 		var endpoint           = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 									"/expenses/expenses";
@@ -336,7 +334,7 @@ component accessors=true singleton threadsafe{
 	* @expenseInfo The struct with the expense's info to create a new entry
 	* @results expense -> { categoryid, markup_percent, projectid, clientid, isduplicate, taxName2, taxName1, taxPercent1, profileid, taxPercent2, id, invoiceid, account_name, taxAmount2, taxAmount1, vis_state, status, bank_name, updated, vendor, has_receipt, ext_systemid, staffid, date, transactionid, include_receipt, accounting_systemid, background_jobid, notes, ext_invoiceid, amount, expenseid, compounded_tax, accountid }
 	*/
-	function updateExpense( required String accountID, required String expenseID ,required struct expenseInfo ){
+	struct function updateExpense( required String accountID, required String expenseID ,required struct expenseInfo ){
 		var expense         = {};
 		var endpoint        = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 								"/expenses/expenses/" & arguments.expenseID;		
@@ -373,13 +371,12 @@ component accessors=true singleton threadsafe{
 	* @results an array of structs with the list of invoices -> invoices [ {invoice1},{invoice2},{invoice3},... ]
 	* invoice -> { status, deposit_percentage, create_date, outstanding, payment_status, street, code, ownerid, vat_number, id, gmail, vat_name, v3_status, discount_description, dispute_status, lname, deposit_status, ext_archive, template, basecampid, sentid, show_attachments, vis_state, current_organization, province, due_date, updated, terms, description, parent, last_order_status, street2, deposit_amount, paid, invoiceid, discount_total, address, invoice_number, customerid, discount_value, accounting_systemid, organization, due_offset_days, language, po_number, display_status, created_at, auto_bill, date_paid, amount, estimateid, city, currency_code, country, autobill_status, generation_date, return_uri, fname, notes, payment_details, accountid }
 	*/
-	function getInvoicesList( required String accountID ){
-		var invoices = [];
+	array function getInvoicesList( required String accountID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/invoices/invoices";
 		var result   =  makeRequest( url=endpoint );
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return invoices;
+				return var invoices = [];
 			}
 			throw result.message;
 		}
@@ -392,7 +389,7 @@ component accessors=true singleton threadsafe{
 	* @invoiceID Id of the invoice to return
 	* @results invoice -> { status, deposit_percentage, create_date, outstanding, payment_status, street, code, ownerid, vat_number, id, gmail, vat_name, v3_status, discount_description, dispute_status, lname, deposit_status, ext_archive, template, basecampid, sentid, show_attachments, vis_state, current_organization, province, due_date, updated, terms, description, parent, last_order_status, street2, deposit_amount, paid, invoiceid, discount_total, address, invoice_number, customerid, discount_value, accounting_systemid, organization, due_offset_days, language, po_number, display_status, created_at, auto_bill, date_paid, amount, estimateid, city, currency_code, country, autobill_status, generation_date, return_uri, fname, notes, payment_details, accountid }
 	*/
-	function getInvoiceById( required String accountID, required String invoiceID ){
+	struct function getInvoiceById( required String accountID, required String invoiceID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/invoices/invoices/"& arguments.invoiceID;
 		var result   =  makeRequest( url=endpoint );
@@ -412,7 +409,7 @@ component accessors=true singleton threadsafe{
 	* @invoiceInfo The struct with the invoice's info to create a new entry
 	* @results invoice -> { status, deposit_percentage, create_date, outstanding, payment_status, street, code, ownerid, vat_number, id, gmail, vat_name, v3_status, discount_description, dispute_status, lname, deposit_status, ext_archive, template, basecampid, sentid, show_attachments, vis_state, current_organization, province, due_date, updated, terms, description, parent, last_order_status, street2, deposit_amount, paid, invoiceid, discount_total, address, invoice_number, customerid, discount_value, accounting_systemid, organization, due_offset_days, language, po_number, display_status, created_at, auto_bill, date_paid, amount, estimateid, city, currency_code, country, autobill_status, generation_date, return_uri, fname, notes, payment_details, accountid }
 	*/
-	function createInvoice( required String accountID, required struct invoiceInfo ){
+	struct function createInvoice( required String accountID, required struct invoiceInfo ){
 		var endpoint           = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 									"/invoices/invoices";		
 		var result             =  makeRequest( method="POST", url=endpoint, body=arguments.invoiceInfo );
@@ -430,7 +427,7 @@ component accessors=true singleton threadsafe{
 	* @invoiceInfo The struct with the invoice's info to create a new entry
 	* @results invoice -> { status, deposit_percentage, create_date, outstanding, payment_status, street, code, ownerid, vat_number, id, gmail, vat_name, v3_status, discount_description, dispute_status, lname, deposit_status, ext_archive, template, basecampid, sentid, show_attachments, vis_state, current_organization, province, due_date, updated, terms, description, parent, last_order_status, street2, deposit_amount, paid, invoiceid, discount_total, address, invoice_number, customerid, discount_value, accounting_systemid, organization, due_offset_days, language, po_number, display_status, created_at, auto_bill, date_paid, amount, estimateid, city, currency_code, country, autobill_status, generation_date, return_uri, fname, notes, payment_details, accountid }
 	*/
-	function updateInvoice( required String accountID, required String invoiceID, required struct invoiceInfo ){
+	struct function updateInvoice( required String accountID, required String invoiceID, required struct invoiceInfo ){
 		var endpoint        = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 								"/invoices/invoices/" & arguments.invoiceID;
 		var result          =  makeRequest( method="PUT", url=endpoint, body=arguments.invoiceInfo );
@@ -463,13 +460,12 @@ component accessors=true singleton threadsafe{
 	* @results array [ {category:string, created_at:string, updated_at:string, categoryid:number, is_editable:boolean,
 	* 									is_cogs:boolean, parentid, vis_state:number, id:number } , {category2}, ... ]
 	*/
-	function getExpenseCategoriesList( required String accountID ){
-		var expenseCategoriesList = [];
+	array function getExpenseCategoriesList( required String accountID ){
 		var endpoint              = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/expenses/categories";
 		var result                =  makeRequest( url=endpoint );
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return expenseCategoriesList;
+				return var expenseCategoriesList = [];
 			}
 			throw result.message;
 		}
@@ -483,7 +479,7 @@ component accessors=true singleton threadsafe{
 	* @results struct {category:string, created_at:string, updated_at:string, categoryid:number, is_editable:boolean,
 	* 									is_cogs:boolean, parentid, vis_state:number, id:number }
 	*/
-	function getExpenseCategoryById( required String accountID, required String expenseCategoryID ){
+	struct function getExpenseCategoryById( required String accountID, required String expenseCategoryID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/expenses/categories/"& arguments.expenseCategoryID;
 		var result   =  makeRequest( url=endpoint );
@@ -502,7 +498,7 @@ component accessors=true singleton threadsafe{
 	* @accountID The account ID of the gateways to list
 	* @results gateways -> [ { sgid, connectionid, gateway_name, id }, ... ]
 	*/
-	function getGatewaysList( required String accountID ){
+	array function getGatewaysList( required String accountID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/system/gateways";
 		var result   =  makeRequest( url=endpoint );
 		if( result.error ){
@@ -519,13 +515,12 @@ component accessors=true singleton threadsafe{
 	* @accountID The account ID of the estimates to list
 	* @results an array of structs -> estimates: [ estimate:{ province, code, create_date, street, ownerid, vat_number, id, invoiced, city, lname, ext_archive, template, created_at, vis_state, current_organization, status, estimate_number, updated, terms, description, vat_name, street2, sentid, ui_status, discount_total, address, accepted, customerid, discount_value, accounting_systemid, language, po_number, country, notes, amount, estimateid, display_status, organization, rich_proposal, fname, reply_status, currency_code }, ... ]
 	*/
-	function getEstimatesList( required String accountID ){
-		var estimatesList = [];
+	array function getEstimatesList( required String accountID ){
 		var endpoint      = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/estimates/estimates";
 		var result        =  makeRequest( url=endpoint );
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return estimatesList;
+				return var estimatesList = [];
 			}
 			throw result.message;
 		}
@@ -538,7 +533,7 @@ component accessors=true singleton threadsafe{
 	* @estimateID Id of the estimate to return
 	* @results estimate:{ province, code, create_date, street, ownerid, vat_number, id, invoiced, city, lname, ext_archive, template, created_at, vis_state, current_organization, status, estimate_number, updated, terms, description, vat_name, street2, sentid, ui_status, discount_total, address, accepted, customerid, discount_value, accounting_systemid, language, po_number, country, notes, amount, estimateid, display_status, organization, rich_proposal, fname, reply_status, currency_code }
 	*/
-	function getEstimateById( required String accountID, required String estimateID ){
+	struct function getEstimateById( required String accountID, required String estimateID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/estimates/estimates/"& arguments.estimateID;
 		var result   =  makeRequest( url=endpoint );
@@ -558,7 +553,7 @@ component accessors=true singleton threadsafe{
 	* @estimateInfo The struct with the estimate's info to create a new entry
 	* @results estimate:{ province, code, create_date, street, ownerid, vat_number, id, invoiced, city, lname, ext_archive, template, created_at, vis_state, current_organization, status, estimate_number, updated, terms, description, vat_name, street2, sentid, ui_status, discount_total, address, accepted, customerid, discount_value, accounting_systemid, language, po_number, country, notes, amount, estimateid, display_status, organization, rich_proposal, fname, reply_status, currency_code }
 	*/
-	function createEstimate( required String accountID, required struct estimateInfo ){
+	struct function createEstimate( required String accountID, required struct estimateInfo ){
 		var endpoint             = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 									"/estimates/estimates";
 		var result               =  makeRequest( method="POST", url=endpoint, body=arguments.estimateInfo );
@@ -576,7 +571,7 @@ component accessors=true singleton threadsafe{
 	* @estimateInfo The struct with the estimate's info to update
 	* @results estimate:{ province, code, create_date, street, ownerid, vat_number, id, invoiced, city, lname, ext_archive, template, created_at, vis_state, current_organization, status, estimate_number, updated, terms, description, vat_name, street2, sentid, ui_status, discount_total, address, accepted, customerid, discount_value, accounting_systemid, language, po_number, country, notes, amount, estimateid, display_status, organization, rich_proposal, fname, reply_status, currency_code }
 	*/
-	function updateEstimate( required String accountID, required String estimateID, required struct estimateInfo ){
+	struct function updateEstimate( required String accountID, required String estimateID, required struct estimateInfo ){
 		var estimate          = {};
 		var endpoint          = "https://api.freshbooks.com/accounting/account/"& arguments.accountID &
 								"/estimates/estimates/" & arguments.estimateID;
@@ -610,18 +605,17 @@ component accessors=true singleton threadsafe{
 	* @accountID The account ID of the items to list
 	* @results array of structs -> items: [ item: { itemid, accounting_systemid, updated, name, qty, inventory,unit_cost: { amount, code }, tax1, vis_state, tax2, id, description }, ... ]
 	*/
-	function getItemsList( required String accountID ){
-		var itemsList = [];
+	array function getItemsList( required String accountID ){
 		var endpoint  = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/items/items";
 		var result    =  makeRequest( url=endpoint );
 
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return itemsList;
+				return var itemsList = [];
 			}
 			throw result.message;
 		}
-		return itemsList;
+		return result.response.response.result.items;
 	}
 
 	/**
@@ -630,7 +624,7 @@ component accessors=true singleton threadsafe{
 	* @itemID Id of the item to return
 	* @results item: { itemid, accounting_systemid, updated, name, qty, inventory,unit_cost: { amount, code" }, tax1, vis_state, tax2, id, description }
 	*/
-	function getItemById( required String accountID, required String itemID ){
+	struct function getItemById( required String accountID, required String itemID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/items/items/"& arguments.itemID;
 		var result   =  makeRequest( url=endpoint );
@@ -650,7 +644,7 @@ component accessors=true singleton threadsafe{
 	* @itemInfo struct with the item's info to create a new entry
 	* @results item: { itemid, accounting_systemid, updated, name, qty, inventory,unit_cost: { amount, code" }, tax1, vis_state, tax2, id, description }
 	*/
-	function createItem( required String accountID, required struct itemInfo ){
+	struct function createItem( required String accountID, required struct itemInfo ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/items/items";
 		var result =  makeRequest( method="POST", url=endpoint, body=arguments.itemInfo );
 
@@ -667,7 +661,7 @@ component accessors=true singleton threadsafe{
 	* @itemInfo struct with the item's info to update
 	* @results item: { itemid, accounting_systemid, updated, name, qty, inventory,unit_cost: { amount, code" }, tax1, vis_state, tax2, id, description }
 	*/
-	function updateItem( required String accountID, required String itemID, required struct itemInfo ){
+	struct function updateItem( required String accountID, required String itemID, required struct itemInfo ){
 		var newItem  = {};
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/items/items/" & arguments.itemID;
@@ -701,14 +695,13 @@ component accessors=true singleton threadsafe{
 	* @accountID The account ID of the payments to list
 	* @results array of structs -> payments: [ { payment: { orderid, accounting_systemid, updated, invoiceid, creditid, amount { amount, code }, clientid, vis_state, logid, note, overpaymentid, gateway, date, transactionid, from_credit, type, id } , ... ]
 	*/
-	function getPaymentsList( required String accountID ){
-		var paymentsList = [];
+	array function getPaymentsList( required String accountID ){
 		var endpoint     = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/payments/payments";
 		var result       =  makeRequest( url=endpoint );
 
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return paymentsList;
+				return var paymentsList = [];
 			}
 			throw result.message;
 		}
@@ -721,7 +714,7 @@ component accessors=true singleton threadsafe{
 	* @itemID Id of the payment to return
 	* @results payment: { orderid, accounting_systemid, updated, invoiceid, creditid, amount { amount, code }, clientid, vis_state, logid, note, overpaymentid, gateway, date, transactionid, from_credit, type, id }
 	*/
-	function getPaymentById( required String accountID, required String paymentID ){
+	struct function getPaymentById( required String accountID, required String paymentID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 		"/estimates/estimates/"& arguments.paymentID;
 		
@@ -742,7 +735,7 @@ component accessors=true singleton threadsafe{
 	* @paymentInfo struct with the payment's info to create a new entry
 	* @results payment: { orderid, accounting_systemid, updated, invoiceid, creditid, amount { amount, code }, clientid, vis_state, logid, note, overpaymentid, gateway, date, transactionid, from_credit, type, id }
 	*/
-	function createPayment( required String accountID, required struct paymentInfo ){
+	struct function createPayment( required String accountID, required struct paymentInfo ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/payments/payments";
 		var result   =  makeRequest( method="POST", url=endpoint, body=arguments.paymentInfo );
 
@@ -759,7 +752,7 @@ component accessors=true singleton threadsafe{
 	* @paymentInfo struct with the payment's info to update
 	* @results payment: { orderid, accounting_systemid, updated, invoiceid, creditid, amount { amount, code }, clientid, vis_state, logid, note, overpaymentid, gateway, date, transactionid, from_credit, type, id }
 	*/
-	function updatePayment( required String accountID, required String paymentID, required struct paymentInfo ){
+	struct function updatePayment( required String accountID, required String paymentID, required struct paymentInfo ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & 
 						"/payments/payments/" & arguments.paymentID;
 		var result   =  makeRequest( method="PUT", url=endpoint, body=arguments.paymentInfo );
@@ -791,14 +784,13 @@ component accessors=true singleton threadsafe{
 	* @accountID The account ID of the taxes to list
 	* @results an array of structs -> taxes: [ tax: { accounting_systemid, updated, name, number, taxid, amount, compound, id }, ... ]
 	*/
-	function getTaxesList( required String accountID ){
-		var taxesList = [];
+	array function getTaxesList( required String accountID ){
 		var endpoint  = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/taxes/taxes";
 		var result    =  makeRequest(  url=endpoint );
 
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return taxesList;
+				return var taxesList = [];
 			}
 			throw result.message;
 		}
@@ -811,7 +803,7 @@ component accessors=true singleton threadsafe{
 	* @itemID Id of the tax to return
 	* @results tax: { accounting_systemid, updated, name, number, taxid, amount, compound, id }
 	*/
-	function getTaxById( required String accountID, required String taxID ){
+	struct function getTaxById( required String accountID, required String taxID ){
 		var endpoint               = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 										"/taxes/taxes/"& arguments.taxID;
 		var result                 =  makeRequest( url=endpoint );
@@ -831,7 +823,7 @@ component accessors=true singleton threadsafe{
 	* @taxInfo struct with the tax's info to create a new entry
 	* @results tax: { accounting_systemid, updated, name, number, taxid, amount, compound, id }
 	*/
-	function createTax( required String accountID, required struct taxInfo ){
+	struct function createTax( required String accountID, required struct taxInfo ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/taxes/taxes";
 		var result   =  makeRequest( method="POST", headers=headers, url=endpoint, body=arguments.taxInfo );
 
@@ -848,7 +840,7 @@ component accessors=true singleton threadsafe{
 	* @taxInfo struct with the tax's info to update a new entry
 	* @results tax: { accounting_systemid, updated, name, number, taxid, amount, compound, id }
 	*/
-	function updateTax( required String accountID, required String taxID, required struct taxInfo ){
+	struct function updateTax( required String accountID, required String taxID, required struct taxInfo ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/taxes/taxes/" & arguments.taxID;
 		var result   =  makeRequest( method="PUT", url=endpoint, body=arguments.taxInfo );
@@ -882,14 +874,13 @@ component accessors=true singleton threadsafe{
 	* 								 username, updated, p_province, p_city, p_code, p_country, accounting_systemid, bus_phone, signup_date,
 	* 				 				 language, level, userid, p_street2, vis_state, fname, organization, p_street, currency_code}, ... ]
 	*/
-	function getStaffList( required String accountID ){
-		var staffList = [];
+	array function getStaffList( required String accountID ){
 		var endpoint  = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & "/users/staffs";
 		var result    =  makeRequest( url=endpoint );
 
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return staffList;
+				return var staffList = [];
 			}
 			throw result.message;
 		}
@@ -904,7 +895,7 @@ component accessors=true singleton threadsafe{
 	* 				   updated, p_province, p_city, p_code, p_country, accounting_systemid, bus_phone, signup_date, language, level, userid,
 	* 				   p_street2, vis_state, fname, organization, p_street, currency_code}
 	*/
-	function getStaffById( required String accountID, required String staffID ){
+	struct function getStaffById( required String accountID, required String staffID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/users/staffs/"& arguments.staffID;
 		var result   =  makeRequest( url=endpoint );
@@ -927,7 +918,7 @@ component accessors=true singleton threadsafe{
 	* 				   updated, p_province, p_city, p_code, p_country, accounting_systemid, bus_phone, signup_date, language, level, userid,
 	* 				   p_street2, vis_state, fname, organization, p_street, currency_code}
 	*/
-	function updateStaff( required String accountID, required String staffID, required struct staffInfo ){
+	struct function updateStaff( required String accountID, required String staffID, required struct staffInfo ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID &
 						"/users/staffs/" & arguments.staffID;
 		var result   =  makeRequest( method="PUT", url=endpoint, body=arguments.staffInfo );
@@ -958,43 +949,41 @@ component accessors=true singleton threadsafe{
 	}
 
 	/**
-	* Get time entries
-	* @businessID The business ID associated with the time entries
-	* @results struct -> time_entries { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
-	* 									meta { pages, total_logged, total_unbilled, per_page, total, page } }
-	*/
-	function getTimeEntries( required String businessID ){
-		var timeEntries = [];
-		var endpoint    = "https://api.freshbooks.com/timetracking/business/" & arguments.businessID & "/time_entries";
-		var result      =  makeRequest( url=endpoint );
-
-		if( result.error ){
-			if ( result.message == "404 NOT FOUND" ){
-				return staffList;
-			}
-			throw result.message;
-		}
-		return timeEntries;
-	}
-
-	/**
 	* Get the list of the projects associated with a business ID
 	* @businessID The business ID associated with the projects to list
 	* @results an array of structs -> projects: [ project: { due_date, logged_duration, fixed_price, group, description, complete, title, project_type, budget, updated_at, sample, services, rate, internal, client_id, active, created_at, id, billing_method }  ]
 	*/
-	function getProjectsList( required String businessID ){
-		var projectsList = [];
+	array function getProjectsList( required String businessID ){
 		var endpoint = "https://api.freshbooks.com/projects/business/" & 
 		arguments.businessID & "/projects";
 		var result   =  makeRequest( url=endpoint );
 
 		if( result.error ){
 			if ( result.message == "404 NOT FOUND" ){
-				return projectsList;
+				return varprojectsList;
 			}
 			throw result.message;
 		}
 		return result.response.projects;
+	}
+
+	/**
+	* Get time entries
+	* @businessID The business ID associated with the time entries
+	* @results struct -> time_entries { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
+	* 									meta { pages, total_logged, total_unbilled, per_page, total, page } }
+	*/
+	array function getTimeEntries( required String businessID ){
+		var endpoint    = "https://api.freshbooks.com/timetracking/business/" & arguments.businessID & "/time_entries";
+		var result      =  makeRequest( url=endpoint );
+
+		if( result.error ){
+			if ( result.message == "404 NOT FOUND" ){
+				return var timeEntries = [];
+			}
+			throw result.message;
+		}
+		return result.response.time_entries;
 	}
 
 	/**
@@ -1005,7 +994,7 @@ component accessors=true singleton threadsafe{
 	* @results struct -> time_entry { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
 	* 									meta { pages, total_logged, total_unbilled, per_page, total, page } }
 	*/
-	function createTimeEntry( required String accountID, required String businessID, required struct timeEntryInfo ){
+	struct function createTimeEntry( required String accountID, required String businessID, required struct timeEntryInfo ){
 		var endpoint = "https://api.freshbooks.com/timetracking/business/" & arguments.businessID & "/time_entries";
 		var result   =  makeRequest( method="POST", url=endpoint, body=arguments.timeEntryInfo );
 
@@ -1024,10 +1013,10 @@ component accessors=true singleton threadsafe{
 	* @results struct -> time_entry { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
 	* 									meta { pages, total_logged, total_unbilled, per_page, total, page } }
 	*/
-	function updateTimeEntry( required String accountID, required String businessID, required String timeEntryID, required struct timeEntryInfo ){
+	struct function updateTimeEntry( required String accountID, required String businessID, required String timeEntryID, required struct timeEntryInfo ){
 		var endpoint = "https://api.freshbooks.com/timetracking/business/" & arguments.businessID &
 						"/time_entries/" & arguments.timeEntryID;
-		var result   =  makeRequest( method="PUT", headers=headers, url=endpoint, body=arguments.timeEntryInfo );
+		var result   =  makeRequest( method="PUT", url=endpoint, body=arguments.timeEntryInfo );
 
 		if( result.error ){
 			throw result.message;
@@ -1057,7 +1046,7 @@ component accessors=true singleton threadsafe{
 	* @projectID ID of the project to retrieve
 	* @results project: { due_date, logged_duration, fixed_price, group, description, complete, title, project_type, budget, updated_at, sample, services, rate, internal, client_id, active, created_at, id, billing_method } 
 	*/
-	function getProjectById( required String businessID, required String projectID ){
+	struct function getProjectById( required String businessID, required String projectID ){
 		var endpoint = "https://api.freshbooks.com/projects/business/" & arguments.businessID & 
 						"/projects/" & arguments.projectID;
 		var result   =  makeRequest( url=endpoint );
@@ -1077,7 +1066,7 @@ component accessors=true singleton threadsafe{
 	* @taskID ID of the task to retrieve
 	* @results task: { updated, description, vis_state, rate, taskid, billable, tname, tdesc, id, name }
 	*/
-	function getTaskById( required String accountID, required String taskID ){
+	struct function getTaskById( required String accountID, required String taskID ){
 		var endpoint = "https://api.freshbooks.com/accounting/account/" & arguments.accountID & 
 						"/projects/tasks/" & arguments.taskID;
 		var result   =  makeRequest( url=endpoint );

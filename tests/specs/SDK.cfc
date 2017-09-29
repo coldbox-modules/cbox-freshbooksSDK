@@ -286,10 +286,10 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					//expect ( result.name ).toBe( "some tax" );
 				});
 				it( "can update a single tax" , function(){
-					var taxDetails = {};
+					var taxDetails       = {};
 					taxDetails[ "name" ] = "other tax";
-					var tax[ "tax" ] = taxDetails;
-					var result = sdk.updateTax( "EalP4", "12283", tax );
+					var tax[ "tax" ]     = taxDetails;
+					var result           = sdk.updateTax( "EalP4", "12283", tax );
 					expect ( result.name ).toBe( "other tax" );
 				});
 				it( "can delete a single tax" , function(){
@@ -304,10 +304,10 @@ component extends="coldbox.system.testing.BaseTestCase"{
 					expect ( staff ).notToBeEmpty();
 				});
 				it( "can update a staff member" , function(){
-					var staffDetails = {};
+					var staffDetails               = {};
 					staffDetails[ "organization" ] = "Ortus Solutions";
-					var staff[ "staff" ] = staffDetails;
-					var result = sdk.updateStaff( "EalP4", 1, staff );
+					var staff[ "staff" ]           = staffDetails;
+					var result                     = sdk.updateStaff( "EalP4", 1, staff );
 					expect ( result.organization ).toBe( "Ortus Solutions" );
 				});
 				it( "can delete a staff member" , function(){
@@ -319,34 +319,33 @@ component extends="coldbox.system.testing.BaseTestCase"{
 				it( "can list time entries" , function(){
 					var timeEntries = sdk.getTimeEntries( "400641" );
 					expect ( timeEntries ).toBeArray();
-					writeDump( timeEntries );
 				});
 				it( "can create a time entry" , function(){
-					var entryDetails = {};
-					entryDetails[ "is_logged" ] = true;
-					entryDetails[ "duration" ] = 7200;
-					entryDetails[ "note" ] = "stuff";
+					var entryDetails             = {};
+					entryDetails[ "is_logged" ]  = true;
+					entryDetails[ "duration" ]   = 7200;
+					entryDetails[ "note" ]       = "stuff";
 					entryDetails[ "started_at" ] = "2017-09-25T20:00:00.000z";
-					entryDetails[ "client_id" ] = "164816";
+					entryDetails[ "client_id" ]  = "164810";
 					entryDetails[ "project_id" ] = "831050";
-					var entry[ "time_entry" ] = entryDetails;
-					//var result = sdk.createTimeEntry( "EalP4", "400641", entry );
+					var entry[ "time_entry" ]    = entryDetails;
+					//var result                 = sdk.createTimeEntry( "EalP4", "400641", entry );
 					//expect ( result.duration ).toBe( 7200 );
 				});
 				it( "can update a time entry" , function(){
-					var timeEntryDetails = {};
-					timeEntryDetails[ "is_logged" ] = true;
-					timeEntryDetails[ "duration" ] = 600;
-					timeEntryDetails[ "note" ] = "updated Note";
+					var timeEntryDetails             = {};
+					timeEntryDetails[ "is_logged" ]  = true;
+					timeEntryDetails[ "duration" ]   = 600;
+					timeEntryDetails[ "note" ]       = "updated Note";
 					timeEntryDetails[ "started_at" ] = "2017-09-25T10:00:00.000z";
-					timeEntryDetails[ "client_id" ] = "164816";
+					timeEntryDetails[ "client_id" ]  = "164816";
 					timeEntryDetails[ "project_id" ] = "831050";
-					var timeEntry[ "staff" ] = timeEntryDetails;
-					//var result = sdk.updateTimeEntry( "EalP4", 1, staff );
-					//expect ( result.organization ).toBe( "Ortus Solutions" );
+					var timeEntry[ "time_entry" ]    = timeEntryDetails;
+					//var result                     = sdk.updateTimeEntry( "EalP4", "400641", "831050", timeEntry );
+					//expect ( result.duration ).toBe( 600 );
 				});
 				it( "can delete a time entry" , function(){
-					//sdk.deleteTimeEntry( "EalP4", "businessid", "timeentryId" );
+					//sdk.deleteTimeEntry( "EalP4", "400641", "831050" );
 				});	
 				it( "can list projects" , function(){
 					var projects = sdk.getProjectsList( "400641" );
