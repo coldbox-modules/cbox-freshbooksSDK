@@ -83,13 +83,12 @@ component{
 				//authentication_credentials = getAPITokenStruct(),
 				authentication_credentials = {
 					clientID = "",
-					clientSecret = "",
-					authorizationCode = ""
+					clientSecret = ""
 				},
-				redirectURI = ""
+				redirectURI = "https://freshbooks.local/index.cfm/Activation/authenticate"
 			}
 
-		}
+		};
 
 	}
 

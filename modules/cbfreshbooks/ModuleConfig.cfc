@@ -33,8 +33,7 @@ component{
 			// The Freshbooks API authetication credentials
 			authentication_credentials = {
 					clientID = "",
-					clientSecret = "",
-					authorizationCode = ""
+					clientSecret = ""
 				},
 			redirectURI = "",
 			// CacheBox Cache Name for oAuth credentials

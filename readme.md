@@ -34,8 +34,7 @@ moduleSettings = {
 			cbfreshbooks = {
 				authentication_credentials = {
 					clientID = "",
-					clientSecret = "",
-					authorizationCode = ""
+					clientSecret = ""
 				},
 				redirectURI = ""
 			}
@@ -47,6 +46,9 @@ moduleSettings = {
 The module will register the sdk for you as:
 
 * `SDK@cbfreshbooks`
+
+## Activation
+You must allow your FreshBooks account to be used by the module, to do so, please run the "activate" action event of the Activation handler and click the activate button
 
 ## Implemented Endpoints and methods
 
@@ -93,13 +95,13 @@ The module will register the sdk for you as:
 	List Payments
 * Taxes
 	Get Single Tax
-	Create SIngle Tax
+	Create Single Tax
 	Update Single Tax
 	Delete Single Tax
 	List Taxes
 * Staff
 	Get Single Staff
-	Update SIngle Staff
+	Update Single Staff
 	Delete Single Staff
 	List Staff
 * Time Entries
@@ -107,8 +109,12 @@ The module will register the sdk for you as:
 	Create a Time Entry
 	Update a Time Entry
 	Delete a TIme Entry
-
-
+* Projects
+	Get Single project
+	Create Project
+	Update Project
+	Delete Project
+	List Projects
 
 ********************************************************************************
 Copyright Since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp

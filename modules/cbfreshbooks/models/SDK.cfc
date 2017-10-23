@@ -7,12 +7,13 @@ component accessors=true singleton threadsafe{
 	 * The module settings
 	 */
 	property name="settings";
+	property name="cache";
 
 	/**
 	 * Access token and refresh token
 	 */
-	property name="tokenAccess" default="";
-	property name="refreshToken" default="";
+	property name="tokenAccess";
+	property name="refreshToken";
 
 	/**
 	 * Authorization code
@@ -28,10 +29,11 @@ component accessors=true singleton threadsafe{
 	property name="log"          inject="logbox:logger:{this}";
 	property name="cachebox"	 inject="cachebox";
 
+
 	// Static Variables
-	variables.API_URL 			= "https://api.freshbooks.com/auth/oauth/token/";
-	variables.AUTHORIZATION_URL	= "https://my.freshbooks.com/service/auth/oauth/";
-	variables.CACHE_KEY			= "fb_sdk_oauth_token";
+	variables.API_URL           = "https://api.freshbooks.com/auth/oauth/token/";
+	variables.AUTHORIZATION_URL = "https://my.freshbooks.com/service/auth/oauth/";
+	variables.CACHE_KEY         = "fb_sdk_oauth_token";
 
 	/**
 	* Constructor
@@ -41,10 +43,12 @@ component accessors=true singleton threadsafe{
 	* @cachebox.inject cachebox
 	*/
 	function init( required settings, required cachebox ){
+		variables.tokenAccess = "";
+		variables.refreshToken = "";
 		variables.settings          = arguments.settings;
 
 		// Load cache configured by user
-		variables.cache 			= cachebox.getCache( arguments.settings.cacheName );
+		variables.cache 			            = cachebox.getCache( arguments.settings.cacheName );
 
 		return this;
 	}
@@ -61,7 +65,7 @@ component accessors=true singleton threadsafe{
 	* The user has to allow manually the access to the FreshBooks account and paste the authorization code into the module settings
 	* @results String -> Authorization URL
 	*/
-	String function getLoginURL(){
+	String function buildAuthorizationURL(){
 		var strLoginURL = AUTHORIZATION_URL
  		 & "authorize?client_id=" & settings.authentication_credentials.clientID
  		 & "&response_type=code"
@@ -71,25 +75,27 @@ component accessors=true singleton threadsafe{
 	}
 
 	/**
-	* Do the authentication process and retrieve the token access from a given authorization code
-	* Authenticate the first time, after that returns the struct stored in cache, if the token has expired call the refreshToken method
+	* Do the authentication process and retrieve the token access from a given authorization code (Use the activation handler to retrieve the auth code)
+	* Authenticate the first time, after that returns the struct stored in cache, if the token has expired, it calls the refreshToken method
 	* and get a new token access
+	* @authorizationCode Authorization code retrived by the authorization link
 	* @results struct = { access_token:string, expires_in:date, expires_in_raw:number, refresh_token:string, success:boolean, token_type:string } 
 	*/
 	struct function authenticate(){
+		if( isNull( getAuthorizationCode() ) ){
+			throw "Please activate your FreshBooks Account first.";
+		}
 		var tokenStruct = cache.get( variables.CACHE_KEY );
-		if( !isNull( tokenStruct ) AND
-			tokenStruct.success AND
-			dateCompare( now(), parseDateTime( tokenStruct.expires_in ), "n" ) <= 0
-		){
+		if( isAuth() ){
 			return tokenStruct;
-		} else if( len( getTokenAccess() ) AND len( getRefreshToken() ) ){
+		}
+		else if( len( getTokenAccess() ) AND len( getRefreshToken() ) ){
 			return this.refreshToken( getRefreshToken() );
 		}
 		var body = {};
 		body[ "grant_type" ]    = "authorization_code";
 		body[ "client_secret" ] = "#settings.authentication_credentials.clientSecret#";
-		body[ "code" ]          = "#settings.authentication_credentials.authorizationCode#";
+		body[ "code" ]          =  getAuthorizationCode();
 		body[ "client_id" ]     = "#settings.authentication_credentials.clientID#";
 		body[ "redirect_uri" ]  = "#settings.redirectURI#";
 
@@ -113,6 +119,34 @@ component accessors=true singleton threadsafe{
 		var response = makeRequest( method="POST", url=API_URL, body=body, type="A" );
 		return authResponse( response );
 	 }
+
+	/**
+	* Check if the freshbooks account is authenticated (struct stored in cache)
+	* @results boolean -> returns true if the token struct exist and it's still valid, otherwise returns false
+	*/
+	boolean function isAuth(){
+		var tokenStruct = cache.get( variables.CACHE_KEY );
+		if( !isNull( tokenStruct ) AND
+			tokenStruct.success AND
+			dateCompare( now(), parseDateTime( tokenStruct.expires_in ), "n" ) <= 0
+		){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	/**
+	* Revoke Access to the freshbooks account
+	* Remove token access, refresh token, authorization code and authorization struct from the application
+	*/
+	function revokeAccess(){
+		setTokenAccess("");
+		setRefreshToken("");
+		setAuthorizationCode("");
+		cache.clear( variables.CACHE_KEY );
+	}
 
 	
 	/**
@@ -138,6 +172,7 @@ component accessors=true singleton threadsafe{
 		}
 		else{
 			structInsert( stuResponse, "access_token", "Authorization Failed " & response.message );
+			structInsert( stuResponse, "message", response.message );
 			structInsert( stuResponse, "success", false );
 		}
 		
@@ -145,7 +180,6 @@ component accessors=true singleton threadsafe{
 
 		return stuResponse;
 	 }
-
 
 	/**
 	* Make a test call
@@ -949,25 +983,6 @@ component accessors=true singleton threadsafe{
 	}
 
 	/**
-	* Get the list of the projects associated with a business ID
-	* @businessID The business ID associated with the projects to list
-	* @results an array of structs -> projects: [ project: { due_date, logged_duration, fixed_price, group, description, complete, title, project_type, budget, updated_at, sample, services, rate, internal, client_id, active, created_at, id, billing_method }  ]
-	*/
-	array function getProjectsList( required String businessID ){
-		var endpoint = "https://api.freshbooks.com/projects/business/" & 
-		arguments.businessID & "/projects";
-		var result   =  makeRequest( url=endpoint );
-
-		if( result.error ){
-			if ( result.message == "404 NOT FOUND" ){
-				return varprojectsList;
-			}
-			throw result.message;
-		}
-		return result.response.projects;
-	}
-
-	/**
 	* Get time entries
 	* @businessID The business ID associated with the time entries
 	* @results struct -> time_entries { note, duration, project_id, client_id, is_logged, started_at, active, id, timer { id, is_running},
@@ -1041,6 +1056,25 @@ component accessors=true singleton threadsafe{
 	}
 
 	/**
+	* Get the list of the projects associated with a business ID
+	* @businessID The business ID associated with the projects to list
+	* @results an array of structs -> projects: [ project: { due_date, logged_duration, fixed_price, group, description, complete, title, project_type, budget, updated_at, sample, services, rate, internal, client_id, active, created_at, id, billing_method }  ]
+	*/
+	array function getProjectsList( required String businessID ){
+		var endpoint = "https://api.freshbooks.com/projects/business/" & 
+		arguments.businessID & "/projects";
+		var result   =  makeRequest( url=endpoint );
+
+		if( result.error ){
+			if ( result.message == "404 NOT FOUND" ){
+				return var projectsList = [];
+			}
+			throw result.message;
+		}
+		return result.response.projects;
+	}
+
+	/**
 	* Returns a single project if it exists
 	* @businessID The business ID associated with the projects to list
 	* @projectID ID of the project to retrieve
@@ -1058,6 +1092,57 @@ component accessors=true singleton threadsafe{
 			throw result.message;
 		}
 		return result.response.project;
+	}
+
+	/**
+	* Create a new project
+	* @businessID The business ID associated with the project to create
+	* @projectInfo struct with the project's info to create a new entry
+	* @results project: { due_date, logged_duration, fixed_price, group, description, complete, title, project_type, budget, updated_at, sample, 					services, rate, internal, client_id, active, created_at, id, billing_method } 
+	*/
+	struct function createProject( required String businessID, required struct projectInfo ){
+		var endpoint = "https://api.freshbooks.com/projects/business/" & arguments.businessID & "/projects";
+		writeDump( arguments.projectInfo );
+		var result   =  makeRequest( method="POST", url=endpoint, body=arguments.projectInfo );
+
+		if( result.error ){
+			throw result.message;
+		}
+		return result.response.project;
+	}
+
+	/**
+	* Update a project
+	* @businessID The business ID associated with the project to update
+	* @projectID ID of the project to update
+	* @projectInfo struct with the project's info to update
+	* @results project: { due_date, logged_duration, fixed_price, group, description, complete, title, project_type, budget, updated_at, sample, 					services, rate, internal, client_id, active, created_at, id, billing_method } 
+	*/
+	struct function updateProject( required String businessID, required String projectID, required struct projectInfo ){
+		var endpoint = "https://api.freshbooks.com/projects/business/" & arguments.businessID & "/projects" &
+						arguments.projectID;
+		var result   =  makeRequest( method="PUT", url=endpoint, body=arguments.projectInfo );
+
+		if( result.error ){
+			throw result.message;
+		}
+		return result.response.project;
+	}
+
+	/**
+	* Delete a project
+	* @businessID The business ID associated with the project to delete
+	* @projectID ID of the project to delete
+	* @projectInfo struct with the project's info to delete
+	*/
+	struct function deleteProject( required String businessID, required String projectID, required struct projectInfo ){
+		var endpoint = "https://api.freshbooks.com/projects/business/" & arguments.businessID & "/projects" &
+						arguments.projectID;
+		var result   =  makeRequest( method="DELETE", url=endpoint, body=arguments.projectInfo );
+
+		if( result.error ){
+			throw result.message;
+		}
 	}
 
 	/**
