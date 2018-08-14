@@ -23,8 +23,6 @@ component{
 	this.cfmapping			= "cbfreshbooks";
 	// Auto-map models
 	this.autoMapModels		= true;
-	// Module Dependencies That Must Be Loaded First, use internal names or aliases
-	this.dependencies		= [ ];
 
 	/**
 	* Configure module
@@ -32,8 +30,14 @@ component{
 	function configure(){
 
 		settings = {
-			// The Freshbooks API Token
-			APIToken = ""
+			// The Freshbooks API authetication credentials
+			authentication_credentials = {
+					clientID = "",
+					clientSecret = ""
+				},
+			redirectURI = "",
+			// CacheBox Cache Name for oAuth credentials
+			cacheName = "default"
 		}
 
 	}

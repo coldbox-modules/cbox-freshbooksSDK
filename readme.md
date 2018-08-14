@@ -31,10 +31,13 @@ Create a `cbfreshbooks` struct inside of your `config/Coldbox.cfc` under the `mo
 // Module Settings
 moduleSettings = {
     // Freshbooks Module Settings
-    cbfreshbooks = {
-        // The Freshbooks API Token
-        APIToken = "";
-    }
+			cbfreshbooks = {
+				authentication_credentials = {
+					clientID = "",
+					clientSecret = ""
+				},
+				redirectURI = ""
+			}
 };
 ```
 
@@ -44,21 +47,74 @@ The module will register the sdk for you as:
 
 * `SDK@cbfreshbooks`
 
-## Implemented Endpoints
+## Activation
+You must allow your FreshBooks account to be used by the module, to do so, please run the "activate" action event of the Activation handler and click the activate button
 
-* Authentication
-* Categories
+## Implemented Endpoints and methods
+
 * Clients
-* Estimates
+	Get Single Client: 
+	Create Single Client
+	Update SIngle Client
+	Delete Single Client
+	List Clients
+* Expenses
+	Get Expense
+	Create Expense
+	Update Single Expense
+	Delete Single Expense
+	List Expenses
+* Gateways
+	List Gateways
 * Invoices
+	Get Single Invoice
+	Create Single Invoice
+	Update Single Invoice
+	Delete Single Invoice
+	List Invoices
+* Expense Categories
+	Get Single Expense Category
+	List Expense Categories
+* Estimates
+	Get Single Estimate
+	Create Single Estimate
+	Update Single Estimate
+	Delete SIngle Estimate
+	List Estimates 
 * Items
-* Projects
-* Recurring
-* System
+	Get Single Item
+	Create Single Item
+	Update Single Item
+	Delete SIngle Item
+	List Items
+* Payments
+	Get Single Payment
+	Create Single Payment
+	Update Single Payment
+	Delete Single Payment
+	List Payments
+* Taxes
+	Get Single Tax
+	Create Single Tax
+	Update Single Tax
+	Delete Single Tax
+	List Taxes
+* Staff
+	Get Single Staff
+	Update Single Staff
+	Delete Single Staff
+	List Staff
 * Time Entries
-* Reports
-
-
+	Fetch Time Entries
+	Create a Time Entry
+	Update a Time Entry
+	Delete a TIme Entry
+* Projects
+	Get Single project
+	Create Project
+	Update Project
+	Delete Project
+	List Projects
 
 ********************************************************************************
 Copyright Since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp

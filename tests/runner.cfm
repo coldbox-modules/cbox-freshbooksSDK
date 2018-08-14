@@ -9,5 +9,6 @@
 <cfparam name="url.propertiesFilename" 	default="TEST.properties">
 <cfparam name="url.propertiesSummary" 	default="false" type="boolean">
 
-<!--- Include the TestBox HTML Runner --->
+<!--- Include the TestBox HTML Runner 
 <cfinclude template="/testbox/system/runners/HTMLRunner.cfm" >
+--->

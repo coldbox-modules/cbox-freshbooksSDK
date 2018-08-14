@@ -6,7 +6,7 @@ component{
 		// coldbox directives
 		coldbox = {
 			//Application Setup
-			appName 				= "Development Shell",
+			appName 				= "Freshbooks SDK",
 
 			//Development Settings
 			reinitPassword			= "",
@@ -80,20 +80,26 @@ component{
 		moduleSettings = {
 
 			cbfreshbooks = {
-				APIToken = getAPIToken()
+				//authentication_credentials = getAPITokenStruct(),
+				authentication_credentials = {
+					clientID = "",
+					clientSecret = ""
+				},
+				redirectURI = "https://freshbooks.local/index.cfm/Activation/authenticate"
 			}
 
-		}
+		};
 
 	}
 
-	function getAPIToken(){
-		var targetFile = expandPath( "/config/apitoken.cfm" );
+	function getAPITokenStruct(){
+		var targetFile = expandPath( "/config/apiToken.cfm" );
 		// If local file token exists, use it.
 		if( fileExists( targetFile ) ){
-			return fileRead( targetFile );
+			include template="../config/apiToken.cfm";
+		
+			return authentication_credentials;
 		}
-
 		// Check Java Environmennt
 		return getEnv( "FRESHBOOKS_API_TOKEN", "" );
 	}
