@@ -3,7 +3,7 @@
     "author": "Ortus Solutions <info@ortussolutions.com",
     "location": "http://downloads.ortussolutions.com.s3.amazonaws.com/ortussolutions/coldbox-modules/cbfreshbooks/@build.version@/cbfreshbooks-@build.version@.zip",
     "version": "@build.version@+@build.number@",
-    "slug": "cbModule",
+    "slug":"cbfreshbooks",
     "type": "modules",
     "homepage": "https://github.com/coldbox-modules/cbox-freshbooksSDK",
     "bugs": "https://github.com/coldbox-modules/cbox-freshbooksSDK/issues",
