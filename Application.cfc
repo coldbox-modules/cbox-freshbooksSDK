@@ -29,6 +29,9 @@ component{
 
 	// request start
 	public boolean function onRequestStart(String targetPage){
+		if ( ! application.keyExists( "cbBootstrap" ) ) {
+			onApplicationStart();
+		}
 		// Process ColdBox Request
 		application.cbBootstrap.onRequestStart( arguments.targetPage );
 

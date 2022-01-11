@@ -11,9 +11,9 @@
         "testbox":"stable"
     },
     "installPaths":{
-        "testbox":"testbox",
-        "coldbox":"coldbox",
-        "workbench":"workbench"
+        "testbox":"testbox/",
+        "coldbox":"coldbox/",
+        "workbench":"workbench/"
     },
     "testbox":{
         "runner":"http://localhost:49616/tests/runner.cfm"
